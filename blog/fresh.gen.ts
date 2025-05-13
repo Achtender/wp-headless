@@ -4,14 +4,12 @@
 
 import * as $_slug_ from "./routes/[slug].tsx";
 import * as $_404 from "./routes/_404.tsx";
+import * as $_app from "./routes/_app.tsx";
+import * as $all_about_animals_slug_ from "./routes/all-about-animals/[slug].tsx";
 import * as $api_comment from "./routes/api/comment.ts";
+import * as $api_debug_navigations from "./routes/api/debug_navigations.ts";
 import * as $index from "./routes/index.tsx";
-import * as $page_page_ from "./routes/page/[page].tsx";
 import * as $posts_slug_ from "./routes/posts/[slug].tsx";
-import * as $posts_category_category_index from "./routes/posts/category/[category]/index.tsx";
-import * as $posts_category_category_page_page_ from "./routes/posts/category/[category]/page/[page].tsx";
-import * as $posts_tag_tag_index from "./routes/posts/tag/[tag]/index.tsx";
-import * as $posts_tag_tag_page_page_ from "./routes/posts/tag/[tag]/page/[page].tsx";
 import * as $LeaveReplyForm from "./islands/LeaveReplyForm.tsx";
 import type { Manifest } from "$fresh/server.ts";
 
@@ -19,16 +17,12 @@ const manifest = {
   routes: {
     "./routes/[slug].tsx": $_slug_,
     "./routes/_404.tsx": $_404,
+    "./routes/_app.tsx": $_app,
+    "./routes/all-about-animals/[slug].tsx": $all_about_animals_slug_,
     "./routes/api/comment.ts": $api_comment,
+    "./routes/api/debug_navigations.ts": $api_debug_navigations,
     "./routes/index.tsx": $index,
-    "./routes/page/[page].tsx": $page_page_,
     "./routes/posts/[slug].tsx": $posts_slug_,
-    "./routes/posts/category/[category]/index.tsx":
-      $posts_category_category_index,
-    "./routes/posts/category/[category]/page/[page].tsx":
-      $posts_category_category_page_page_,
-    "./routes/posts/tag/[tag]/index.tsx": $posts_tag_tag_index,
-    "./routes/posts/tag/[tag]/page/[page].tsx": $posts_tag_tag_page_page_,
   },
   islands: {
     "./islands/LeaveReplyForm.tsx": $LeaveReplyForm,

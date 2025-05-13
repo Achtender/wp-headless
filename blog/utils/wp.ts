@@ -66,7 +66,7 @@ export async function getPages(): Promise<WpPost[]> {
   return pages;
 }
 
-const listQuery = "_embed=wp:featuredmedia";
+const listQuery = "_embed=wp:featuredmedia,acf:attachment";
 
 /** Gets the posts of the given page */
 export function getPosts(
@@ -128,6 +128,21 @@ export async function getPageBySlug(slug: string): Promise<WpPost | undefined> {
   const [posts] = await callApi<WpPost[]>(path);
   return posts[0];
 }
+
+/** Gets navigation by the give search */
+export async function getNavigationBySearch(search: string): Promise<WpPost | undefined> {
+  const path = `/navigation?search=${search}&_embed=author,wp:term`;
+  const [posts] = await callApi<WpPost[]>(path);
+  return posts[0];
+}
+
+/** Gets the post by tax */
+export async function getPostTaxAndSlug(tax: string,slug: string): Promise<WpPost | undefined> {
+  const path = `/${tax}?slug=${slug}&${listQuery}`;
+  const [posts] = await callApi<WpPost[]>(path);
+  return posts[0];
+}
+
 
 type PostCommentParams = {
   post: number;

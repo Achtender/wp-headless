@@ -5,6 +5,7 @@
     "docker:clear": "docker compose rm --force && docker compose down && docker volume rm blog_db_data",
     "docker:reset": "deno task docker:clear || true && deno task docker"
   },
+  "nodeModulesDir": "auto",
   "importMap": "./import_map.json",
   "compilerOptions": {
     "jsx": "react-jsx",

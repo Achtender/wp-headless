@@ -9,10 +9,18 @@ import { start } from "fresh/server.ts";
 import manifest from "./fresh.gen.ts";
 import "std/dotenv/load.ts";
 
-import twindPlugin from "fresh/plugins/twind.ts";
-import twindConfig from "./twind.config.ts";
+// import twindPlugin from "fresh/plugins/twind.ts";
+// import twindConfig from "./twind.config.ts";
 import globalStylePlugin from "utils/global_style_plugin.ts";
 
-await start(manifest, {
-  plugins: [twindPlugin(twindConfig), globalStylePlugin],
-});
+// await start(manifest, {
+//   plugins: [twindPlugin(twindConfig), globalStylePlugin],
+// });
+
+import { defineConfig } from "fresh/server.ts";
+import tailwind from "fresh/plugins/tailwind.ts";
+
+
+await start(manifest, defineConfig({
+  plugins: [tailwind(), globalStylePlugin],
+}));

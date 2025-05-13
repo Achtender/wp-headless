@@ -3,14 +3,14 @@
 import { Handlers, PageProps, RouteConfig } from "fresh/server.ts";
 import {
   getNavigationBySearch,
-  getPageBySlug,
   getPages,
+  getPostTaxAndSlug,
   getSiteName,
   WpPost,
 } from "utils/wp.ts";
 import { Header } from "components/Header.tsx";
 import { Footer } from "components/Footer.tsx";
-import { PostMain } from "components/PostMain.tsx";
+import { AnimalMain } from "components/AnimalMain.tsx";
 import { parse } from "utils/html.ts";
 
 type PageData = {
@@ -49,7 +49,7 @@ export const handler: Handlers<PageData> = {
     const [pages, siteName, post, navigation] = await Promise.all([
       getPages(),
       getSiteName(),
-      getPageBySlug(lastSlug),
+      getPostTaxAndSlug(ctx.params?.taxonomie, lastSlug),
       getNavigation(),
     ]);
 
@@ -73,12 +73,13 @@ export default function Post({ data }: PageProps<PageData>) {
         navigation={navigation}
         style="light"
       />
-      <PostMain post={post} />
+      <AnimalMain post={post} />
       <Footer siteName={siteName} />
     </>
   );
 }
 
 export const config: RouteConfig = {
-  routeOverride: "/:slug*",
+  // FIXME(@all): this needs to be made dynamic 
+  routeOverride: "/:taxonomie(all-about-cats|all-about-dogs)/:slug",
 };

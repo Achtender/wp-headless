@@ -29,10 +29,10 @@ export const handler: Handlers<PageData> = {
 export default function Post({ data }: PageProps<PageData>) {
   const { pages, siteName, post } = data;
   return (
-    <div>
+    <>
       <Header siteName={siteName} pages={pages} style="light" />
       <PostMain post={post} />
       <Footer siteName={siteName} />
-    </div>
+    </>
   );
 }

@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  display: flex;
+  flex-direction: column;
+
+  height: 100vh;
+
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+
+.w-5xl {
+  width: 85rem;
+}

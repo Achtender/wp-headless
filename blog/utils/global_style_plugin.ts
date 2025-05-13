@@ -5,9 +5,9 @@ import { blockCssText } from "./global_style_block.ts";
 
 const cssText = /* css */`
 a {
-  text-decoration-line: underline;
+  /* text-decoration-line: underline; 
   text-underline-offset: 3px;
-  text-decoration-thickness: 1px;
+  text-decoration-thickness: 1px;*/
 }
 a:hover {
   text-decoration-style: dashed;
