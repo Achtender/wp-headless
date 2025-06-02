@@ -1,0 +1,19 @@
+{
+  "build_id": "d1a5f0a83ba2f06634e69f18eab1ba5bb39430a7",
+  "files": {
+    "main.js": [
+      "chunk-IHJAWXS3.js"
+    ],
+    "deserializer.js": [],
+    "signals.js": [
+      "chunk-IHJAWXS3.js",
+      "chunk-3TT4ZS6S.js"
+    ],
+    "chunk-IHJAWXS3.js": [],
+    "island-leavereplyform.js": [
+      "chunk-3TT4ZS6S.js"
+    ],
+    "chunk-3TT4ZS6S.js": [],
+    "metafile.json": []
+  }
+}
