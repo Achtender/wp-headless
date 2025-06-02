@@ -12,7 +12,7 @@ export function AnimalMain({ post }: { post: WpPost }) {
         <img
           class="aspect-square object-cover w-full"
           loading="lazy"
-          src={media.media_details.sizes.large.source_url}
+          src={media.media_details.sizes.medium_large.source_url}
           alt=""
         />
       </div>
@@ -21,6 +21,8 @@ export function AnimalMain({ post }: { post: WpPost }) {
 
   const media_banner = post._embedded["wp:featuredmedia"]
     .filter((_: any) => _.id === post.featured_media)[0];
+
+ 
 
   return (
     <main class="mx-auto max-w-screen-lg pb-10 flex-1 my-12">
@@ -36,7 +38,7 @@ export function AnimalMain({ post }: { post: WpPost }) {
                 class="object-cover"
                 style="aspect-ratio: 9/16;"
                 loading="lazy"
-                src={media_banner.media_details.sizes.large.source_url}
+                src={media_banner.media_details.sizes.medium_large.source_url}
                 alt=""
               />
             }
