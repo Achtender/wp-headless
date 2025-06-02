@@ -1,0 +1,9 @@
+name: deploy
+on:
+  workflow_dispatch: # Allows manual triggering of the workflow
+jobs:
+  test-trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Confirm workflow trigger
+        run: echo "Workflow triggered successfully!"
