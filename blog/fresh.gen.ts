@@ -5,6 +5,7 @@
 import * as $_slug_ from "./routes/[slug].tsx";
 import * as $_404 from "./routes/_404.tsx";
 import * as $_app from "./routes/_app.tsx";
+import * as $_middleware from "./routes/_middleware.ts";
 import * as $all_about_animals_slug_ from "./routes/all-about-animals/[slug].tsx";
 import * as $api_comment from "./routes/api/comment.ts";
 import * as $api_debug_navigations from "./routes/api/debug_navigations.ts";
@@ -19,6 +20,7 @@ const manifest = {
     "./routes/[slug].tsx": $_slug_,
     "./routes/_404.tsx": $_404,
     "./routes/_app.tsx": $_app,
+    "./routes/_middleware.ts": $_middleware,
     "./routes/all-about-animals/[slug].tsx": $all_about_animals_slug_,
     "./routes/api/comment.ts": $api_comment,
     "./routes/api/debug_navigations.ts": $api_debug_navigations,
