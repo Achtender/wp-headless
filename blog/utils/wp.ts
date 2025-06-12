@@ -25,6 +25,7 @@ const SITE_INFO_API = WP_API
   ? WP_API
   : `https://public-api.wordpress.com/rest/v1.1/sites/${WP_COM_DOMAIN}`;
 
+export type WpMedia = WP.WP_REST_API_Media ;
 export type WpPost = WP.WP_REST_API_Post;
 export type WpCategory = WP.WP_REST_API_Category;
 export type WpTag = WP.WP_REST_API_Tag;
@@ -45,7 +46,8 @@ export async function callApi<T = unknown>(
   path: string,
   options?: RequestInit,
 ): Promise<[T, WpResponseMetadata]> {
-  const resp = await fetch(WP_API_ROOT + path, options);
+  const _options = { ...options, cache: "force-cache" } as RequestInit;
+  const resp = await fetch(WP_API_ROOT + path, _options);
   return [await resp.json() as T, {
     total: toNum(resp.headers.get("x-wp-total")),
     totalPages: toNum(resp.headers.get("x-wp-totalpages")),
@@ -54,7 +56,8 @@ export async function callApi<T = unknown>(
 }
 
 export async function getSiteName() {
-  const resp = await fetch(SITE_INFO_API + "/?fields=name");
+  const _options = { cache: "force-cache" } as RequestInit;
+  const resp = await fetch(SITE_INFO_API + "/?fields=name", _options);
   return (await resp.json())?.name || "Untitled";
 }
 
@@ -141,6 +144,13 @@ export async function getPostTaxAndSlug(tax: string,slug: string): Promise<WpPos
   const path = `/${tax}?slug=${slug}&${listQuery}`;
   const [posts] = await callApi<WpPost[]>(path);
   return posts[0];
+}
+
+/** Gets the media by id */
+export async function getMediaBySlug(slug: string): Promise<WpMedia | undefined> {
+  const path = `/media/${slug}`;
+  const [media] = await callApi<WpMedia[]>(path);
+  return media;
 }
 
 

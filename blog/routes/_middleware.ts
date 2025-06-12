@@ -1,34 +1,25 @@
 import { FreshContext } from "fresh/server.ts";
 
 export async function handler(req: Request, ctx: FreshContext) {
-  const url = new URL(req.url);
-
-  if (url.searchParams.has("wp-proxy")) {
-    const response = await ctx.next();
-    const origin = new URL(req.url).origin;
-
-    if (response.headers.get("content-type")?.includes("text/html")) {
-      let text = await response.text();
-
-      text = text //
-        .replaceAll('src="/', `src="${origin}/`)
-        .replaceAll('href="/', `href="${origin}/`);
-
-      const headers = new Headers(response.headers);
-      headers.set(
-        "Content-Type",
-        response.headers.get("content-type") || "text/html",
-      );
-
-      return new Response(text, {
-        status: response.status,
-        headers,
-      });
-    }
-
-    return response;
+  const response = await ctx.next();
+  const headers = new Headers(response.headers);
+  const pathname = new URL(req.url).pathname;
+  
+  if (
+    pathname.startsWith("/cdn/") ||
+    pathname.endsWith(".css") ||
+    pathname.endsWith(".svg")
+  ) {
+    // If the request is for the CDN, set the Cache-Control header
+    headers.set("Cache-Control", "public, max-age=31536000, immutable");
+  } else {
+    // For other requests, set a shorter cache duration
+    headers.set("Cache-Control", "public, max-age=86400");
   }
 
-  // Otherwise, continue as normal
-  return await ctx.next();
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
 }

@@ -10,6 +10,7 @@ import * as $all_about_animals_slug_ from "./routes/all-about-animals/[slug].tsx
 import * as $api_comment from "./routes/api/comment.ts";
 import * as $api_debug_navigations from "./routes/api/debug_navigations.ts";
 import * as $api_webhooks_deploy from "./routes/api/webhooks/deploy.ts";
+import * as $cdn_slug_ from "./routes/cdn/[slug].ts";
 import * as $index from "./routes/index.tsx";
 import * as $posts_slug_ from "./routes/posts/[slug].tsx";
 import * as $LeaveReplyForm from "./islands/LeaveReplyForm.tsx";
@@ -25,6 +26,7 @@ const manifest = {
     "./routes/api/comment.ts": $api_comment,
     "./routes/api/debug_navigations.ts": $api_debug_navigations,
     "./routes/api/webhooks/deploy.ts": $api_webhooks_deploy,
+    "./routes/cdn/[slug].ts": $cdn_slug_,
     "./routes/index.tsx": $index,
     "./routes/posts/[slug].tsx": $posts_slug_,
   },

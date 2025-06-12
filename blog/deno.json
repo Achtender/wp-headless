@@ -1,7 +1,7 @@
 {
   "tasks": {
     "build": "deno run -A dev.ts build",
-    "start": "deno run -A --watch=static/,routes/ dev.ts",
+    "start": "deno run build; deno run -A --watch=static/,routes/ dev.ts",
     "docker": "docker compose build && docker compose up",
     "docker:clear": "docker compose rm --force && docker compose down && docker volume rm blog_db_data",
     "docker:reset": "deno task docker:clear || true && deno task docker"

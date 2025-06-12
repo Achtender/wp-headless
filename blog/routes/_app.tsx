@@ -2,13 +2,18 @@ import { AppProps } from "fresh/server.ts";
 
 export default function App({ Component }: AppProps) {
   return (
-    <html>
+    <html lang="en-NL">
       <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+ 
+        <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests; img-src 'self' mhs.achtender.eu;" />
+ 
         <title>My Fresh Project</title>
-        <link rel="stylesheet" href="/styles.css" />
-        {/* <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests; img-src 'self' mhs.achtender.eu;" /> */}
+        <meta name="description" content="An example application showcasing a performant frontend with a WordPress-based content management system."/>
+
+        <style>{Deno.readTextFileSync("./_fresh/static/styles.css")}</style>
+        {/* <link rel="stylesheet" href="/styles.css" /> */}
       </head>
       <body>
         <Component />

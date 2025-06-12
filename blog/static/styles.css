@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+@import "tailwindcss";
+@theme {  --aspect-retro: 4 / 3; }
+
 body {
   display: flex;
   flex-direction: column;
@@ -14,4 +17,8 @@ body {
 
 .w-5xl {
   width: 85rem;
+}
+
+body{
+  background-color: red;;
 }
