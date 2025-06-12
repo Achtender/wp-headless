@@ -4,16 +4,11 @@ on:
     branches: main
   pull_request:
     branches: main
-  workflow_dispatch: # Allows manual triggering of the workflow
 
 jobs:
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
-    
-    concurrency:
-      group: staging_environment
-      cancel-in-progress: true
 
     permissions:
       id-token: write # Needed for auth with Deno Deploy
@@ -29,13 +24,13 @@ jobs:
           deno-version: v2.x
 
       - name: Build step
-        run: "deno run -A blog/dev.ts build"
+        run: "deno task build"
 
       - name: Upload to Deno Deploy
         uses: denoland/deployctl@v1
         with:
           project: "wp-headless"
-          entrypoint: "./main.ts"
-          root: "./blog/"
+          entrypoint: "main.ts"
+          root: "./blog"
           
           
