@@ -28,8 +28,8 @@ export function AnimalMain({ post }: { post: WpPost }) {
       <section class="mx-auto text-lg lex flex-col gap-10">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
           <div class="flex flex-col px-10 justify-center">
-            <h1 class="mb-10">Hi, my name is {post?.acf?.banner.name}!</h1>
-            <p>{post?.acf?.banner.description}</p>
+            <h1 class="mb-10">Hi, my name is {post?.acf?.banner.animal_name}!</h1>
+            <p>{post?.acf?.banner.animal_description}</p>
           </div>
           <div class="flex flex-col px-10">
             {

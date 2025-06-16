@@ -4,7 +4,7 @@ export default function App({ Component }: AppProps) {
   return (
     <html lang="en-NL">
       <head>
-        <meta charset="utf-8" />
+        <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
  
         <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests; img-src 'self' mhs.achtender.eu;" />
