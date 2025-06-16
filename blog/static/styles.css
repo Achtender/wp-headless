@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 @import "tailwindcss";
-@theme {  --aspect-retro: 4 / 3; }
+@theme {  } 
 
 body {
   display: flex;
@@ -13,12 +13,4 @@ body {
 
   overflow-x: hidden;
   overflow-y: scroll;
-}
-
-.w-5xl {
-  width: 85rem;
-}
-
-body{
-  background-color: red;;
 }

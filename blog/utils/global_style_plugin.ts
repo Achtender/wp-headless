@@ -4,6 +4,8 @@ import { Plugin } from "fresh/server.ts";
 import { blockCssText } from "./global_style_block.ts";
 
 const cssText = /* css */`
+${blockCssText}
+
 a {
   /* text-decoration-line: underline; 
   text-underline-offset: 3px;
@@ -110,8 +112,6 @@ a:hover {
   max-height: none;
   object-fit: cover;
 }
-
-${blockCssText}
 
 `;
 

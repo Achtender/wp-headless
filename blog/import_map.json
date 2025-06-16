@@ -8,6 +8,7 @@
     "@preact/signals": "https://esm.sh/*@preact/signals@1.0.3",
     "@preact/signals-core": "https://esm.sh/*@preact/signals-core@1.0.1",
     "tailwindcss": "npm:tailwindcss@3.4.1",
+    "graphql-request": "https://esm.sh/graphql-request",
     "components/": "./components/",
     "utils/": "./utils/"
   }

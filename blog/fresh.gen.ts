@@ -9,6 +9,7 @@ import * as $_middleware from "./routes/_middleware.ts";
 import * as $all_about_animals_slug_ from "./routes/all-about-animals/[slug].tsx";
 import * as $api_comment from "./routes/api/comment.ts";
 import * as $api_debug_navigations from "./routes/api/debug_navigations.ts";
+import * as $api_graphql from "./routes/api/graphql.ts";
 import * as $api_webhooks_deploy from "./routes/api/webhooks/deploy.ts";
 import * as $cdn_slug_ from "./routes/cdn/[slug].ts";
 import * as $index from "./routes/index.tsx";
@@ -25,6 +26,7 @@ const manifest = {
     "./routes/all-about-animals/[slug].tsx": $all_about_animals_slug_,
     "./routes/api/comment.ts": $api_comment,
     "./routes/api/debug_navigations.ts": $api_debug_navigations,
+    "./routes/api/graphql.ts": $api_graphql,
     "./routes/api/webhooks/deploy.ts": $api_webhooks_deploy,
     "./routes/cdn/[slug].ts": $cdn_slug_,
     "./routes/index.tsx": $index,

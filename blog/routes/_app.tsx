@@ -12,7 +12,8 @@ export default function App({ Component }: AppProps) {
         <title>My Fresh Project</title>
         <meta name="description" content="An example application showcasing a performant frontend with a WordPress-based content management system."/>
 
-        <style>{Deno.readTextFileSync("./_fresh/static/styles.css")}</style>
+        {/* <style>${Deno.readTextFileSync("./_fresh/static/styles.gen.css")}</style> */}
+        <style dangerouslySetInnerHTML={{__html:Deno.readTextFileSync("./_fresh/static/styles.css")}}></style>
         {/* <link rel="stylesheet" href="/styles.css" /> */}
       </head>
       <body>
