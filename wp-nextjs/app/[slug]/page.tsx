@@ -1,6 +1,7 @@
 import { getAllPages, getPageBySlug } from "@/lib/wordpress";
-import { Container, Prose, Section } from "@/components/craft";
+import { Container, Prose, Section, Block } from "@/components/craft";
 import { siteConfig } from "@/site.config";
+import { notFound } from "next/navigation";
 
 import type { Metadata } from "next";
 
@@ -31,11 +32,11 @@ export async function generateMetadata({
   }
 
   const ogUrl = new URL(`${siteConfig.site_domain}/api/og`);
-  ogUrl.searchParams.append("title", page.title.rendered);
+  ogUrl.searchParams.append("title", page.title.raw);
   // Strip HTML tags for description and limit length
-  const description = page.excerpt?.rendered
-    ? page.excerpt.rendered.replace(/<[^>]*>/g, "").trim()
-    : page.content.rendered
+  const description = page.excerpt?.raw
+    ? page.excerpt.raw.replace(/<[^>]*>/g, "").trim()
+    : page.content.raw
       .replace(/<[^>]*>/g, "")
       .trim()
       .slice(0, 200) + "...";
@@ -43,10 +44,10 @@ export async function generateMetadata({
   ogUrl.searchParams.append("description", description);
 
   return {
-    title: page.title.rendered,
+    title: page.title.raw,
     description: description,
     openGraph: {
-      title: page.title.rendered,
+      title: page.title.raw,
       description: description,
       type: "article",
       url: `${siteConfig.site_domain}/${page.slug}`,
@@ -55,13 +56,13 @@ export async function generateMetadata({
           url: ogUrl.toString(),
           width: 1200,
           height: 630,
-          alt: page.title.rendered,
+          alt: page.title.raw,
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title: page.title.rendered,
+      title: page.title.raw,
       description: description,
       images: [ogUrl.toString()],
     },
@@ -76,12 +77,19 @@ export default async function Page({
   const { slug } = await params;
   const page = await getPageBySlug(slug);
 
+  if (
+    !page ||
+    (process.env.NODE_ENV !== "development" && page.slug.startsWith("_"))
+  ) {
+    notFound();
+  }
+
   return (
     <Section>
       <Container>
         <Prose>
-          <h2>{page.title.rendered}</h2>
-          <div dangerouslySetInnerHTML={{ __html: page.content.rendered }} />
+          <h2>{page.title.raw} (<span>{page.status}</span>)</h2>
+          <Block dangerouslySetInnerHTML={{__html:page.content.raw}}></Block>
         </Prose>
       </Container>
     </Section>

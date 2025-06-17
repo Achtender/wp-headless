@@ -6,15 +6,16 @@ import { cn } from "@/lib/utils";
 
 import {
   getFeaturedMediaById,
-  getAuthorById,
+  // getAuthorById,
   getCategoryById,
 } from "@/lib/wordpress";
+import { dangerouslySetInnerWordPressRaw } from "@/lib/wordpress";
 
 export async function PostCard({ post }: { post: Post }) {
   const media = post.featured_media
     ? await getFeaturedMediaById(post.featured_media)
     : null;
-  const author = post.author ? await getAuthorById(post.author) : null;
+  // const author = post.author ? await getAuthorById(post.author) : null;
   const date = new Date(post.date).toLocaleDateString("en-US", {
     month: "long",
     day: "numeric",
@@ -38,7 +39,7 @@ export async function PostCard({ post }: { post: Post }) {
             <Image
               className="h-full w-full object-cover"
               src={media.source_url}
-              alt={post.title?.rendered || "Post thumbnail"}
+              alt={post.title?.raw || "Post thumbnail"}
               width={400}
               height={200}
             />
@@ -49,19 +50,16 @@ export async function PostCard({ post }: { post: Post }) {
           )}
         </div>
         <div
-          dangerouslySetInnerHTML={{
-            __html: post.title?.rendered || "Untitled Post",
-          }}
           className="text-xl text-primary font-medium group-hover:underline decoration-muted-foreground underline-offset-4 decoration-dotted transition-all"
+          {...dangerouslySetInnerWordPressRaw(post.title?.raw || "Untitled Post")}
         ></div>
         <div
           className="text-sm"
-          dangerouslySetInnerHTML={{
-            __html: post.excerpt?.rendered
-              ? post.excerpt.rendered.split(" ").slice(0, 12).join(" ").trim() +
-                "..."
-              : "No excerpt available",
-          }}
+          {...dangerouslySetInnerWordPressRaw(
+            post.excerpt?.raw
+              ? post.excerpt.raw.split(" ").slice(0, 12).join(" ").trim() + "..."
+              : "No excerpt available"
+          )}
         ></div>
       </div>
 

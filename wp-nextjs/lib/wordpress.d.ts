@@ -10,16 +10,19 @@ interface WPEntity {
   link: string;
   guid: {
     rendered: string;
+    raw: string;
   };
 }
 
 interface RenderedContent {
   rendered: string;
+  raw: string;
   protected: boolean;
 }
 
 interface RenderedTitle {
   rendered: string;
+  raw: string;
 }
 
 // Media types
@@ -29,6 +32,11 @@ interface MediaSize {
   height: number;
   mime_type: string;
   source_url: string;
+  sources: Record<string, {
+    file: string;
+    file_size: number;
+    source_url: string;
+  }>;
 }
 
 interface MediaDetails {
@@ -43,6 +51,7 @@ export interface FeaturedMedia extends WPEntity {
   author: number;
   caption: {
     rendered: string;
+    raw: string;
   };
   alt_text: string;
   media_type: string;
@@ -192,6 +201,7 @@ export interface TemplatePart {
   title: {
     raw: string;
     rendered: string;
+    raw: string;
   };
   description: string;
   status: "publish" | "future" | "draft" | "pending" | "private";

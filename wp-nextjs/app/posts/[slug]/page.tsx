@@ -1,5 +1,9 @@
 import { getAllPosts, getAuthorById, getCategoryById } from "@/lib/wordpress";
-import { getFeaturedMediaById, getPostBySlug } from "@/lib/wordpress";
+import {
+  dangerouslySetInnerWordPressRaw,
+  getFeaturedMediaById,
+  getPostBySlug,
+} from "@/lib/wordpress";
 import { notFound } from "next/navigation";
 import { Article, Container, Prose, Section } from "@/components/craft";
 import { badgeVariants } from "@/components/ui/badge";
@@ -32,16 +36,16 @@ export async function generateMetadata({
   }
 
   const ogUrl = new URL(`${siteConfig.site_domain}/api/og`);
-  ogUrl.searchParams.append("title", post.title.rendered);
+  ogUrl.searchParams.append("title", post.title.raw);
   // Strip HTML tags for description
-  const description = post.excerpt.rendered.replace(/<[^>]*>/g, "").trim();
+  const description = post.excerpt.raw.replace(/<[^>]*>/g, "").trim();
   ogUrl.searchParams.append("description", description);
 
   return {
-    title: post.title.rendered,
+    title: post.title.raw,
     description: description,
     openGraph: {
-      title: post.title.rendered,
+      title: post.title.raw,
       description: description,
       type: "article",
       url: `${siteConfig.site_domain}/posts/${post.slug}`,
@@ -50,13 +54,13 @@ export async function generateMetadata({
           url: ogUrl.toString(),
           width: 1200,
           height: 630,
-          alt: post.title.rendered,
+          alt: post.title.raw,
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title: post.title.rendered,
+      title: post.title.raw,
       description: description,
       images: [ogUrl.toString()],
     },
@@ -84,9 +88,9 @@ export default async function Page({
     day: "numeric",
     year: "numeric",
   });
-  const category = await getCategoryById(
-    post?.categories ? post.categories[0] : undefined,
-  );
+  const category = post?.categories
+    ? await getCategoryById(post.categories[0])
+    : undefined;
 
   return (
     <Section>
@@ -94,10 +98,7 @@ export default async function Page({
         <Prose>
           <h1>
             <Balancer>
-              <span
-                dangerouslySetInnerHTML={{ __html: post.title.rendered }}
-              >
-              </span>
+              <span {...dangerouslySetInnerWordPressRaw(post.title.raw)}></span>
             </Balancer>
           </h1>
           <div className="flex justify-between items-center gap-4 text-sm mb-4">
@@ -131,14 +132,19 @@ export default async function Page({
               <img
                 className="w-full h-full object-cover"
                 src={featuredMedia.source_url}
-                alt={post.title.rendered}
+                alt={post.title.raw}
               />
             </div>
           )}
         </Prose>
 
-        <Article dangerouslySetInnerHTML={{ __html: post.content.rendered }} />
-        <code className="my-12 p-2 overflow-auto flex border rounded-lg bg-accent/25"><pre dangerouslySetInnerHTML={{ __html: JSON.stringify(post, null, 2) }} /></code>
+        <Article {...dangerouslySetInnerWordPressRaw(post.content.raw)} />
+
+        <code className="my-12 p-2 overflow-auto flex border rounded-lg bg-accent/25">
+          <pre
+            {...dangerouslySetInnerWordPressRaw(JSON.stringify(post, null, 2))}
+          />
+        </code>
       </Container>
     </Section>
   );
