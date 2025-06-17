@@ -3,6 +3,7 @@ import { Container, Prose, Section } from "@/components/craft";
 import { siteConfig } from "@/site.config";
 
 import type { Metadata } from "next";
+ 
 
 // Revalidate pages every hour
 export const revalidate = 3600;
