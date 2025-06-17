@@ -1,103 +1,147 @@
-import Image from "next/image";
+// Craft Imports
+import { Section, Container, Prose } from "@/components/craft";
+import Balancer from "react-wrap-balancer";
 
+// Next.js Imports
+import Link from "next/link";
+
+// Icons
+import { File, Pen, Tag, Diamond, User, Folder } from "lucide-react";
+import { WordPressIcon } from "@/components/icons/wordpress";
+import { NextJsIcon } from "@/components/icons/nextjs";
+
+// This page is using the craft.tsx component and design system
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+    <Section>
+      <Container>
+        <ToDelete />
+      </Container>
+    </Section>
   );
 }
+
+// This is just some example TSX
+const ToDelete = () => {
+  return (
+    <main className="space-y-6">
+      <Prose>
+        <h1>
+          <Balancer>Headless WordPress built with the Next.js</Balancer>
+        </h1>
+
+        <p>
+          This is <a href="https://github.com/9d8dev/next-wp">next-wp</a>,
+          created as a way to build WordPress sites with Next.js at rapid speed.
+          This starter is designed with{" "}
+          <a href="https://ui.shadcn.com">shadcn/ui</a>,{" "}
+          <a href="https://craft-ds.com">craft-ds</a>, and Tailwind CSS. Use{" "}
+          <a href="https://components.work">brijr/components</a> to build your
+          site with prebuilt components. The data fetching and typesafety is
+          handled in <code>lib/wordpress.ts</code> and{" "}
+          <code>lib/wordpress.d.ts</code>.
+        </p>
+      </Prose>
+
+      {/* <div className="flex justify-between items-center gap-4">
+        <div className="flex items-center gap-3">
+          <a
+            className="h-auto block"
+            href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2F9d8dev%2Fnext-wp&env=WORDPRESS_URL,WORDPRESS_HOSTNAME&envDescription=Add%20WordPress%20URL%20with%20Rest%20API%20enabled%20(ie.%20https%3A%2F%2Fwp.example.com)%20abd%20the%20hostname%20for%20Image%20rendering%20in%20Next%20JS%20(ie.%20wp.example.com)&project-name=next-wp&repository-name=next-wp&demo-title=Next%20JS%20and%20WordPress%20Starter&demo-url=https%3A%2F%2Fwp.9d8.dev"
+          >
+            <img
+              className="not-prose my-4"
+              src="https://vercel.com/button"
+              alt="Deploy with Vercel"
+              width={105}
+              height={32.62}
+            />
+          </a>
+          <p className="!text-sm sr-only sm:not-sr-only text-muted-foreground">
+            Deploy with Vercel in seconds.
+          </p>
+        </div>
+
+        <div className="flex gap-2 items-center">
+          <WordPressIcon className="text-foreground" width={32} height={32} />
+          <NextJsIcon className="text-foreground" width={32} height={32} />
+        </div>
+      </div> */}
+
+      <div className="grid md:grid-cols-3 gap-4 mt-6">
+        <Link
+          className="border h-48 bg-accent/50 rounded-lg p-4 flex flex-col justify-between hover:scale-[1.02] transition-all"
+          href="/posts"
+        >
+          <Pen size={32} />
+          <span>
+            Posts{" "}
+            <span className="block text-sm text-muted-foreground">
+              All posts from your WordPress
+            </span>
+          </span>
+        </Link>
+        <Link
+          className="border h-48 bg-accent/50 rounded-lg p-4 flex flex-col justify-between hover:scale-[1.02] transition-all"
+          href="/pages"
+        >
+          <File size={32} />
+          <span>
+            Pages{" "}
+            <span className="block text-sm text-muted-foreground">
+              Custom pages from your WordPress
+            </span>
+          </span>
+        </Link>
+        <Link
+          className="border h-48 bg-accent/50 rounded-lg p-4 flex flex-col justify-between hover:scale-[1.02] transition-all"
+          href="/posts/authors"
+        >
+          <User size={32} />
+          <span>
+            Authors{" "}
+            <span className="block text-sm text-muted-foreground">
+              List of the authors from your WordPress
+            </span>
+          </span>
+        </Link>
+        <Link
+          className="border h-48 bg-accent/50 rounded-lg p-4 flex flex-col justify-between hover:scale-[1.02] transition-all"
+          href="/posts/tags"
+        >
+          <Tag size={32} />
+          <span>
+            Tags{" "}
+            <span className="block text-sm text-muted-foreground">
+              Content by tags from your WordPress
+            </span>
+          </span>
+        </Link>
+        <Link
+          className="border h-48 bg-accent/50 rounded-lg p-4 flex flex-col justify-between hover:scale-[1.02] transition-all"
+          href="/posts/categories"
+        >
+          <Diamond size={32} />
+          <span>
+            Categories{" "}
+            <span className="block text-sm text-muted-foreground">
+              Categories from your WordPress
+            </span>
+          </span>
+        </Link>
+        {/* <a
+          className="border h-48 bg-accent/50 rounded-lg p-4 flex flex-col justify-between hover:scale-[1.02] transition-all"
+          href="https://github.com/9d8dev/next-wp/blob/main/README.md"
+        >
+          <Folder size={32} />
+          <span>
+            Documentation{" "}
+            <span className="block text-sm text-muted-foreground">
+              How to use `next-wp`
+            </span>
+          </span>
+        </a> */}
+      </div>
+    </main>
+  );
+};
