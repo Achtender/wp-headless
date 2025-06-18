@@ -48,7 +48,12 @@ export function FilterPosts({
     console.log(`Filter changed: ${type} -> ${value}`);
     const newParams = new URLSearchParams(window.location.search);
     newParams.delete("page");
-    value === "all" ? newParams.delete(type) : newParams.set(type, value);
+
+    if (value === "all") {
+      newParams.delete(type);
+    } else {
+      newParams.set(type, value);
+    }
 
     router.push(`/posts?${newParams.toString()}`);
   };
@@ -85,9 +90,7 @@ export function FilterPosts({
         onValueChange={(value) => handleFilterChange("category", value)}
       >
         <SelectTrigger disabled={!hasCategories}>
-          {hasCategories ? (
-            <SelectValue placeholder="All Categories" />
-          ) : (
+          {hasCategories ? <SelectValue placeholder="All Categories" /> : (
             "No categories found"
           )}
         </SelectTrigger>
@@ -106,9 +109,7 @@ export function FilterPosts({
         onValueChange={(value) => handleFilterChange("author", value)}
       >
         <SelectTrigger disabled={!hasAuthors} className="text-center">
-          {hasAuthors ? (
-            <SelectValue placeholder="All Authors" />
-          ) : (
+          {hasAuthors ? <SelectValue placeholder="All Authors" /> : (
             "No authors found"
           )}
         </SelectTrigger>

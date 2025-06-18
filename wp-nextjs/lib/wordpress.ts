@@ -2,6 +2,7 @@
 // Used to fetch data from a WordPress site using the WordPress REST API
 // Types are imported from `wp.d.ts`
 
+
 import querystring from "query-string";
 import type {
   Author,
@@ -11,15 +12,37 @@ import type {
   Post,
   Tag,
 } from "./wordpress.d";
-
 const baseUrl = process.env.WORDPRESS_URL;
 
 if (!baseUrl) {
   throw new Error("WORDPRESS_URL environment variable is not defined");
 }
 
+export function dangerouslySetInnerWordPressRaw(raw?: string)  {
+  let normalized_raw = (raw ?? "");
+  
+  // Remove absolute URLs and replace with relative paths
+  normalized_raw.replace(
+    new RegExp(
+      `<a([^>]+)href=["']${
+        baseUrl!.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&")
+      }/([^"']+)["']`,
+      "g",
+    ),
+    `<a$1href="/$2"`,
+  );
+
+  // Remove HTML comments
+  normalized_raw = normalized_raw.replace(/<!--[\s\S]*?-->/g, '');
+
+  return {
+    dangerouslySetInnerHTML: { __html: normalized_raw },
+  };
+}
+
 function getUrl(path: string, query?: Record<string, any>) {
-  const params = query ? querystring.stringify(query) : null;
+  // const params = query ? querystring.stringify(query) : null;
+  const params = querystring.stringify({ context: "edit", ...(query ?? {}) });
   return `${baseUrl}${path}${params ? `?${params}` : ""}`;
 }
 
@@ -53,9 +76,9 @@ async function wordpressFetch<T>(url: string): Promise<T> {
   return response.json();
 }
 
-export async function getSettings(): Promise<{ page_on_front: Page["id"] }> {
+export async function getSettings(): Promise<{ page_on_front: number }> {
   const url = getUrl("/wp-json/wp/v2/settings");
-  const response = await wordpressFetch<{ page_on_front: Page["id"] }>(url);
+  const response = await wordpressFetch<{ page_on_front: number }>(url);
   return response;
 }
 
@@ -123,7 +146,6 @@ export async function getAllCategories(): Promise<Category[]> {
 }
 
 export async function getCategoryById(id: number): Promise<Category> {
-  if (!id) return undefined;
   const url = getUrl(`/wp-json/wp/v2/categories/${id}`);
   return wordpressFetch<Category>(url);
 }
@@ -187,7 +209,6 @@ export async function getAllAuthors(): Promise<Author[]> {
 }
 
 export async function getAuthorById(id: number): Promise<Author> {
-  if (!id) return undefined;
   const url = getUrl(`/wp-json/wp/v2/users/${id}`);
   return wordpressFetch<Author>(url);
 }

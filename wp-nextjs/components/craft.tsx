@@ -5,6 +5,9 @@ import React from "react";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
+import * as blockSerialization from "@wordpress/block-serialization-default-parser";
+import { library as core_block_library } from "./blocks/core";
+
 // Utility function to merge class names
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -70,8 +73,8 @@ export type GapValue = keyof typeof GAP_VALUES;
 export type ResponsiveValue<T> =
   | T
   | {
-      [K in Breakpoint]?: T;
-    };
+    [K in Breakpoint]?: T;
+  };
 
 // Box-specific props with improved type safety
 export interface BoxProps extends BaseProps {
@@ -154,7 +157,8 @@ const styles = {
       "[&_td]:border-r [&_td]:px-4 [&_td]:py-2 [&_td]:last:border-0",
     ],
     media: [
-      "[&_img]:rounded-lg [&_img]:border [&_img]:my-4 [&_img]:max-w-full [&_img]:h-auto",
+      // "[&_img]:rounded-lg [&_img]:border [&_img]:my-4 [&_img]:max-w-full [&_img]:h-auto",
+      "[&_img]:rounded-lg [&_img]:border [&_img]:max-w-full [&_img]:h-auto",
       "[&_video]:rounded-lg [&_video]:border [&_video]:my-4",
       "[&_figure]:my-4",
       "[&_figure_img]:my-0",
@@ -180,7 +184,7 @@ const styles = {
   layout: {
     spacing: "[&>*+*]:mt-6",
     article: "max-w-prose",
-    container: "max-w-5xl mx-auto p-6 sm:p-8",
+    container: "max-w-6xl mx-auto p-6 sm:p-8",
     section: "py-8 md:py-12",
   },
 };
@@ -242,7 +246,7 @@ export const Article = ({
       articleTypographyStyles,
       styles.layout.spacing,
       styles.layout.article,
-      className
+      className,
     )}
     id={id}
   >
@@ -254,21 +258,68 @@ export const Prose = ({
   children,
   className,
   id,
-  dangerouslySetInnerHTML,
+  // dangerouslySetInnerHTML,
 }: BaseProps & HTMLProps) => (
   <div
-    dangerouslySetInnerHTML={dangerouslySetInnerHTML}
+    // dangerouslySetInnerHTML={dangerouslySetInnerHTML}
     className={cn(baseTypographyStyles, styles.layout.spacing, className)}
     id={id}
   >
     {children}
   </div>
 );
+export const Block = ({
+  dangerouslySetInnerHTML,
+}: BaseProps & HTMLProps) => <>{parseBlock(dangerouslySetInnerHTML?.__html)}</>;
+
+function parseBlock(html?: string) {
+  const reactElement = blockSerialization.parse(html || "");
+
+  return (
+    <>
+      {reactElement.map((block, i) => nextBlock(block, i))}
+    </>
+  );
+}
+
+export function nextBlock(
+  block: blockSerialization.ParsedBlock,
+  key?: React.Key,
+) {
+  let BlockComponent;
+
+  // if (block.attrs && 'id'in block.attrs) {
+  //   key = block.attrs['id'] as React.Key;
+  // }
+
+  // Resolve core blocks
+  if (block.blockName && block.blockName in core_block_library) {
+    BlockComponent = (core_block_library as unknown as Record<
+      string,
+      React.ComponentType<blockSerialization.ParsedBlock>
+    >)[block.blockName];
+
+    return BlockComponent ? <BlockComponent {...block} key={key} /> : null;
+  }
+
+  // Fallback for missing blocks
+  if (block.blockName) {
+    BlockComponent = (core_block_library as unknown as Record<
+      string,
+      React.ComponentType<blockSerialization.ParsedBlock>
+    >)["core/missing"];
+
+    return BlockComponent ? <BlockComponent {...block} key={key} /> : null;
+  }
+
+  // If no blockName or no matching component, return null
+  return null;
+}
 
 // Utility function for responsive classes
 const getResponsiveClass = <T extends string | number>(
   value: ResponsiveValue<T> | undefined,
-  classMap: Record<T, string>
+  classMap: Record<T, string>,
 ): string => {
   if (!value) return "";
   if (typeof value === "object") {
@@ -340,7 +391,7 @@ export const Box = ({
         getResponsiveClass(gap, gapClasses),
         cols && getResponsiveClass(cols, colsClasses),
         rows && getResponsiveClass(rows, colsClasses),
-        className
+        className,
       )}
       id={id}
     >
