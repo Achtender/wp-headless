@@ -1,19 +1,19 @@
-import { getAllPosts, getAuthorById, getCategoryById } from "@/lib/wordpress";
+import { getAllPosts, getAuthorById, getCategoryById } from '@/lib/wordpress';
 import {
   dangerouslySetInnerWordPressRaw,
   getFeaturedMediaById,
   getPostBySlug,
-} from "@/lib/wordpress";
-import { notFound } from "next/navigation";
-import { Article, Container, Prose, Section } from "@/components/craft";
-import { badgeVariants } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
-import { siteConfig } from "@/site.config";
+} from '@/lib/wordpress';
+import { notFound } from 'next/navigation';
+import { Article, Container, Prose, Section } from '@/components/craft';
+import { badgeVariants } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
+import { siteConfig } from '@/site.config';
 
-import Link from "next/link";
-import Balancer from "react-wrap-balancer";
+import Link from 'next/link';
+import Balancer from 'react-wrap-balancer';
 
-import type { Metadata } from "next";
+import type { Metadata } from 'next';
 
 export async function generateStaticParams() {
   const posts = await getAllPosts();
@@ -31,15 +31,20 @@ export async function generateMetadata({
   const { slug } = await params;
   const post = await getPostBySlug(slug);
 
-  if (!post) {
-    return {};
-  }
+  if (!post) return {};
 
   const ogUrl = new URL(`${siteConfig.site_domain}/api/og`);
-  ogUrl.searchParams.append("title", post.title.raw);
+  ogUrl.searchParams.append('title', post.title.raw);
   // Strip HTML tags for description
-  const description = post.excerpt.raw.replace(/<[^>]*>/g, "").trim();
-  ogUrl.searchParams.append("description", description);
+    const description = post.excerpt?.raw
+    ? post.excerpt.raw.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim()
+    : post.content.raw
+      .replace(/\s+/g, ' ')
+      .replace(/<[^>]*>/g, '')
+      .trim()
+      .slice(0, 200) + '...';
+      
+  ogUrl.searchParams.append('description', description);
 
   return {
     title: post.title.raw,
@@ -47,7 +52,7 @@ export async function generateMetadata({
     openGraph: {
       title: post.title.raw,
       description: description,
-      type: "article",
+      type: 'article',
       url: `${siteConfig.site_domain}/posts/${post.slug}`,
       images: [
         {
@@ -59,7 +64,7 @@ export async function generateMetadata({
       ],
     },
     twitter: {
-      card: "summary_large_image",
+      card: 'summary_large_image',
       title: post.title.raw,
       description: description,
       images: [ogUrl.toString()],
@@ -83,10 +88,10 @@ export default async function Page({
     ? await getFeaturedMediaById(post.featured_media)
     : null;
   const author = await getAuthorById(post.author);
-  const date = new Date(post.date).toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
+  const date = new Date(post.date).toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
   });
   const category = post?.categories
     ? await getCategoryById(post.categories[0])
@@ -101,14 +106,14 @@ export default async function Page({
               <span {...dangerouslySetInnerWordPressRaw(post.title.raw)}></span>
             </Balancer>
           </h1>
-          <div className="flex justify-between items-center gap-4 text-sm mb-4">
+          <div className='flex justify-between items-center gap-4 text-sm mb-4'>
             <h5>
               {author?.id && (
                 <>
                   Published {date} by
                   <span>
+                    {' '}
                     <a href={`/posts/?author=${author.id}`}>{author.name}</a>
-                    {" "}
                   </span>
                 </>
               )}
@@ -118,8 +123,8 @@ export default async function Page({
               <Link
                 href={`/posts/?category=${category.id}`}
                 className={cn(
-                  badgeVariants({ variant: "outline" }),
-                  "!no-underline",
+                  badgeVariants({ variant: 'outline' }),
+                  '!no-underline',
                 )}
               >
                 {category.name}
@@ -127,10 +132,10 @@ export default async function Page({
             )}
           </div>
           {featuredMedia?.source_url && (
-            <div className="h-96 my-12 md:h-[500px] overflow-hidden flex items-center justify-center border rounded-lg bg-accent/25">
+            <div className='h-96 my-12 md:h-[500px] overflow-hidden flex items-center justify-center border rounded-lg bg-accent/25'>
               {/* eslint-disable-next-line */}
               <img
-                className="w-full h-full object-cover"
+                className='w-full h-full object-cover'
                 src={featuredMedia.source_url}
                 alt={post.title.raw}
               />
@@ -139,12 +144,6 @@ export default async function Page({
         </Prose>
 
         <Article {...dangerouslySetInnerWordPressRaw(post.content.raw)} />
-
-        <code className="my-12 p-2 overflow-auto flex border rounded-lg bg-accent/25">
-          <pre
-            {...dangerouslySetInnerWordPressRaw(JSON.stringify(post, null, 2))}
-          />
-        </code>
       </Container>
     </Section>
   );

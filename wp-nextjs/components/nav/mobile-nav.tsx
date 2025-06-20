@@ -28,7 +28,7 @@ export function MobileNav() {
   const [open, setOpen] = React.useState(false);
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
+    <Sheet  open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <Button
           variant="ghost"
@@ -38,7 +38,7 @@ export function MobileNav() {
           <span className="sr-only">Toggle Menu</span>
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="pr-0">
+      <SheetContent side="right" className="pr-0">
         <SheetHeader>
           <SheetTitle className="text-left">
             <MobileLink

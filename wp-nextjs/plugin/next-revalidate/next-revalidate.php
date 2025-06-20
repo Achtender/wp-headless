@@ -316,7 +316,7 @@ class Next_Revalidation {
         if (isset($_POST['action']) && $_POST['action'] === 'clear_history') {
             if (check_admin_referer('clear_revalidation_history', 'clear_history_nonce')) {
                 delete_option($this->history_option_name);
-                echo '<script>window.location.reload();</script>';
+                echo '<script>globalThis.location.reload();</script>';
             }
         }
     }

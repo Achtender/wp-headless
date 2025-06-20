@@ -17,9 +17,6 @@ export default async function Page() {
     <Section>
       <Container>
         <Prose>
-          <h2>
-            {page.title.raw} (<span>{page.status}</span>)
-          </h2>
           <Block dangerouslySetInnerHTML={{ __html: page.content.raw }}></Block>
         </Prose>
       </Container>

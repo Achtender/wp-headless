@@ -11,9 +11,6 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  experimental: {
-    nodeMiddleware: true, // Enable Node.js middleware
-  },
   async redirects() {
     return [
       {

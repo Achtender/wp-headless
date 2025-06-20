@@ -1,10 +1,9 @@
-import { getAllPages, getPageBySlug } from "@/lib/wordpress";
-import { Container, Prose, Section, Block } from "@/components/craft";
-import { siteConfig } from "@/site.config";
-import { notFound } from "next/navigation";
+import { getAllPages, getPageBySlug } from '@/lib/wordpress';
+import { Block, Container, Prose, Section } from '@/components/craft';
+import { siteConfig } from '@/site.config';
+import { notFound } from 'next/navigation';
 
-import type { Metadata } from "next";
- 
+import type { Metadata } from 'next';
 
 // Revalidate pages every hour
 export const revalidate = 3600;
@@ -23,26 +22,22 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
+  const [page] = await Promise.all([getPageBySlug(slug)]);
 
-  const [page] = await Promise.all([
-    getPageBySlug(slug),
-  ]);
-
-  if (!page) {
-    return {};
-  }
+  if (!page) return {};
 
   const ogUrl = new URL(`${siteConfig.site_domain}/api/og`);
-  ogUrl.searchParams.append("title", page.title.raw);
+  ogUrl.searchParams.append('title', page.title.raw);
   // Strip HTML tags for description and limit length
   const description = page.excerpt?.raw
-    ? page.excerpt.raw.replace(/<[^>]*>/g, "").trim()
+    ? page.excerpt.raw.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim()
     : page.content.raw
-      .replace(/<[^>]*>/g, "")
+      .replace(/\s+/g, ' ')
+      .replace(/<[^>]*>/g, '')
       .trim()
-      .slice(0, 200) + "...";
+      .slice(0, 200) + '...';
 
-  ogUrl.searchParams.append("description", description);
+  ogUrl.searchParams.append('description', description);
 
   return {
     title: page.title.raw,
@@ -50,7 +45,7 @@ export async function generateMetadata({
     openGraph: {
       title: page.title.raw,
       description: description,
-      type: "article",
+      type: 'article',
       url: `${siteConfig.site_domain}/${page.slug}`,
       images: [
         {
@@ -62,7 +57,7 @@ export async function generateMetadata({
       ],
     },
     twitter: {
-      card: "summary_large_image",
+      card: 'summary_large_image',
       title: page.title.raw,
       description: description,
       images: [ogUrl.toString()],
@@ -80,7 +75,7 @@ export default async function Page({
 
   if (
     !page ||
-    (process.env.NODE_ENV !== "development" && page.slug.startsWith("_"))
+    (process.env.NODE_ENV !== 'development' && page.slug.startsWith('_'))
   ) {
     notFound();
   }
@@ -89,8 +84,7 @@ export default async function Page({
     <Section>
       <Container>
         <Prose>
-          <h2>{page.title.raw} (<span>{page.status}</span>)</h2>
-          <Block dangerouslySetInnerHTML={{__html:page.content.raw}}></Block>
+          <Block dangerouslySetInnerHTML={{ __html: page.content.raw }}></Block>
         </Prose>
       </Container>
     </Section>

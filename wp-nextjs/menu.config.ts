@@ -1,12 +1,17 @@
 // Define the menu items
 export const mainMenu = {
   home: "/",
-  outline: "/outline",
+  blog: "/posts",
+};
+
+export const footerMenu = {
+  home: "/",
   blog: "/posts",
 };
 
 export const contentMenu = {
-  categories: "/posts/categories",
-  tags: "/posts/tags",
   authors: "/posts/authors",
+  categories: "/posts/categories",
+  sitemap: "/outline",
+  tags: "/posts/tags",
 };
