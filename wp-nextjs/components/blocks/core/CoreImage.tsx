@@ -10,9 +10,6 @@ const CoreImage = async ({ attrs }: CoreBlockProps) => {
   const media = await getFeaturedMediaById(attrs.id); // TODO(@all): query media
   const media_source = media.media_details.sizes;
 
-  // console.log('CoreImage media_source', media_source);
-  // console.log('CoreImage attrs.sizeSlug', attrs.sizeSlug);
-
   const media_source_k = attrs.sizeSlug ?? 'medium_large';
   const media_source_files = media_source[media_source_k].sources;
   const media_source_url =

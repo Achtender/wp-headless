@@ -1,5 +1,5 @@
 
-import { dangerouslySetInnerWordPressRaw } from '@/lib/wordpress';
+import { dangerouslySetInnerWordPressRaw } from '@/components/craft-blocks.tsx';
 import { CoreBlockProps } from '@/components/craft-blocks.tsx';
 
 

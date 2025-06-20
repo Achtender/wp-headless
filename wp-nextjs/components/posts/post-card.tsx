@@ -9,7 +9,7 @@ import {
   // getAuthorById,
   getCategoryById,
 } from "@/lib/wordpress";
-import { dangerouslySetInnerWordPressRaw } from "@/lib/wordpress";
+import { dangerouslySetInnerWordPressRaw } from '@/components/craft-blocks.tsx';
 
 export async function PostCard({ post }: { post: Post }) {
   const media = post.featured_media

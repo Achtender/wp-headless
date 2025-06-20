@@ -10,28 +10,7 @@ if (!baseUrl) {
   throw new Error('WORDPRESS_URL environment variable is not defined');
 }
 
-export function trimWordPressHref(raw?: string) {
-  let normalized_raw = raw ?? '';
 
-  // Remove absolute URLs and replace with relative paths
-  normalized_raw = normalized_raw.replace(baseUrl!, ``);
-
-  return normalized_raw;
-}
-
-export function dangerouslySetInnerWordPressRaw(raw?: string) {
-  let normalized_raw = raw ?? '';
-
-  // Remove absolute URLs and replace with relative paths
-  normalized_raw = normalized_raw.replace(new RegExp(`<a([^>]+)href=["']${baseUrl!.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')}/([^"']+)["']`, 'g'), `<a$1href="/$2"`);
-
-  // Remove HTML comments
-  normalized_raw = normalized_raw.replace(/<!--[\s\S]*?-->/g, '');
-
-  return {
-    dangerouslySetInnerHTML: { __html: normalized_raw },
-  };
-}
 
 function getUrl(path: string, query?: Record<string, any>) {
   // const params = query ? querystring.stringify(query) : null;
@@ -48,7 +27,6 @@ class WordPressAPIError extends Error {
 
 async function wordpressFetchResponse(url: string): Promise<Response> {
   const userAgent = 'Next.js WordPress Client';
-  // const credentials = Buffer.from(process.env.WORDPRESS_API_BASIC_AUTH || '').toString('base64');
   const credentials = btoa(unescape(encodeURIComponent(process.env.WORDPRESS_API_BASIC_AUTH || '')));
 
   const response = await fetch(url, {
