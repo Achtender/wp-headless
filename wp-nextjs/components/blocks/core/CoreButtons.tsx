@@ -1,10 +1,15 @@
-import { CoreBlockProps } from '@/components/blocks/core.tsx';
+import { CoreBlockProps } from '@/components/craft-blocks.tsx';
+import { nextBlock } from '@/components/craft-blocks.tsx';
 
 const CoreButtons = (block: CoreBlockProps) => {
-  return block.ctx.nextBlock({
-    ...block,
-    blockName: 'core/group',
-  });
+  return nextBlock(
+    {
+      ...block,
+      blockName: 'core/group',
+    },
+    undefined,
+    block.ctx,
+  );
 };
 
 export default CoreButtons;

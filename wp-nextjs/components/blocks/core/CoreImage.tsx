@@ -1,4 +1,4 @@
-import { CoreBlockProps } from '@/components/blocks/core.tsx';
+import { CoreBlockProps } from '@/components/craft-blocks.tsx';
 import { getFeaturedMediaById } from '@/lib/wordpress';
 import Image from 'next/image';
 

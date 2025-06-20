@@ -6,13 +6,9 @@ import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 import * as blockSerialization from '@wordpress/block-serialization-default-parser';
-import { CoreBlockProps, library as core_block_library } from '@/components/blocks/core';
-import { library as dev_block_library } from '@/components/blocks/dev';
 
-const block_library = {
-  ...core_block_library,
-  ...dev_block_library,
-} as Record<string, React.ComponentType<CoreBlockProps>>;
+import { renderBlock } from './craft-blocks.tsx';
+import type { CoreBlockProps } from './craft-blocks.tsx';
 
 // Utility function to merge class names
 export function cn(...inputs: ClassValue[]) {
@@ -253,60 +249,6 @@ function parseBlock(html?: string) {
   const reactElement = blockSerialization.parse(html || '');
 
   return <>{reactElement.map((block, i) => renderBlock(block as CoreBlockProps, i))}</>;
-}
-
-export function renderBlock(block: CoreBlockProps, block_key?: React.Key, block_parent_ctx?: any) {
-  const clonedParentContext = block_parent_ctx
-    ? JSON.parse(JSON.stringify(block_parent_ctx)) //
-    : {};
-  const clonedBlockContext = block.ctx ? JSON.parse(JSON.stringify(block.ctx)) : {};
-
-  let BlockComponent;
-  const block_ctx = {
-    ...clonedParentContext,
-    ...clonedBlockContext,
-    nextBlock: (block: CoreBlockProps, key: React.Key) => {
-      // try {
-      return renderBlock(block, key, {
-        ...clonedParentContext, //
-        ...clonedBlockContext,
-      });
-      // } catch (err) {
-      //   // Fallback for error rendering blocks
-      //   if (block.blockName) {
-      //     BlockComponent = block_library['dev/warning'];
-
-      //     return (
-      //       <BlockComponent
-      //         {...block}
-      //         key={block_key}
-      //         ctx={{
-      //           code: 'Error',
-      //           message: err.message,
-      //         }}
-      //       />
-      //     );
-      //   }
-      // }
-    },
-  };
-
-  // Resolve core blocks
-  if (block.blockName && block.blockName in block_library) {
-    BlockComponent = block_library[block.blockName as string];
-
-    return <BlockComponent {...block} key={block_key} ctx={block_ctx} />;
-  }
-
-  // Fallback for missing blocks
-  if (block.blockName) {
-    BlockComponent = block_library['dev/missing'];
-
-    return <BlockComponent {...block} key={block_key} ctx={block_ctx} />;
-  }
-
-  // If no blockName is given, return null
-  return null;
 }
 
 // Utility function for responsive classes

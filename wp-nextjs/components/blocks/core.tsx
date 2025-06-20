@@ -1,11 +1,3 @@
-import * as blockSerialization from '@wordpress/block-serialization-default-parser';
-
-export interface CoreBlockProps extends blockSerialization.ParsedBlock {
-  attrs: blockSerialization.Attributes & Record<string, any>;
-  ctx?: any;
-  key?: React.Key;
-}
-
 import CoreImage from '@/components/blocks/core/CoreImage';
 import CoreGallery from '@/components/blocks/core/CoreGallery';
 import CoreHeading from '@/components/blocks/core/CoreHeading';
@@ -47,4 +39,4 @@ export const library = {
 
 // const CoreGroup = (
 //   { ctx, blockName, attrs, innerBlocks, innerHTML, innerContent }: CoreBlockProps,
-// ) => <>{innerBlocks.map((block, i) => ctx.nextBlock(block, i))}</>;
+// ) => <>{innerBlocks.map((block, i) => nextBlock(block, i))}</>;

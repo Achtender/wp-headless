@@ -1,6 +1,6 @@
 
 import { dangerouslySetInnerWordPressRaw } from '@/lib/wordpress';
-import { CoreBlockProps } from '@/components/blocks/core.tsx';
+import { CoreBlockProps } from '@/components/craft-blocks.tsx';
 
 
 const CoreHeading = ({ attrs, innerContent }: CoreBlockProps) => {

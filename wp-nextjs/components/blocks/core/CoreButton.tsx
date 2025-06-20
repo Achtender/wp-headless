@@ -1,5 +1,5 @@
 import { trimWordPressHref } from '../../../lib/wordpress.ts';
-import { CoreBlockProps } from '@/components/blocks/core.tsx';
+import { CoreBlockProps } from '@/components/craft-blocks.tsx';
 
 import { Button } from '@/components/ui/button.tsx';
 import Link from 'next/link';

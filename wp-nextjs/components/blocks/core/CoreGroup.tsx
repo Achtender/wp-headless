@@ -1,4 +1,5 @@
-import { CoreBlockProps } from '@/components/blocks/core.tsx';
+import { CoreBlockProps } from '@/components/craft-blocks.tsx';
+import { nextBlock } from '@/components/craft-blocks.tsx';
 
 const CoreGroup = ({ ctx, attrs, innerBlocks }: CoreBlockProps) => {
   const styles: string[] = [];
@@ -54,7 +55,7 @@ const CoreGroup = ({ ctx, attrs, innerBlocks }: CoreBlockProps) => {
 
   return (
     <div className={['gap-4', ...styles].join(' ')} style={inlineStyles}>
-      {innerBlocks.map((block, i) => ctx.nextBlock(block, i))}
+      {innerBlocks.map((block, i) => nextBlock(block, i, ctx))}
     </div>
   );
 };

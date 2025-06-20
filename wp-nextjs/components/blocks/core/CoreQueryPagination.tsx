@@ -1,7 +1,8 @@
-import { CoreBlockProps } from '@/components/blocks/core.tsx';
+import { CoreBlockProps } from '@/components/craft-blocks.tsx';
+import { nextBlock } from '@/components/craft-blocks.tsx';
 
 const CorePagination = (block: CoreBlockProps) => {
-  return block.ctx.nextBlock({
+  return nextBlock({
     ...block,
     attrs: {
       ...block.attrs,
@@ -13,7 +14,7 @@ const CorePagination = (block: CoreBlockProps) => {
       },
     },
     blockName: 'core/group',
-  });
+  }, undefined, block.ctx);
 };
 
 export default CorePagination;

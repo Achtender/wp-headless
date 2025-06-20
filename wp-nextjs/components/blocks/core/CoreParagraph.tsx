@@ -1,4 +1,4 @@
-import { CoreBlockProps } from '@/components/blocks/core.tsx';
+import { CoreBlockProps } from '@/components/craft-blocks.tsx';
 import { dangerouslySetInnerWordPressRaw } from '@/lib/wordpress';
 
 const CoreParagraph = ({ innerContent }: CoreBlockProps) => {

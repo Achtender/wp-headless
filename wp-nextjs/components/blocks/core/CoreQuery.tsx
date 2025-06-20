@@ -1,5 +1,6 @@
 import { getQueryPosts } from '@/lib/wordpress';
-import { CoreBlockProps } from '@/components/blocks/core';
+import { CoreBlockProps } from '@/components/craft-blocks.tsx';
+import { nextBlock } from '@/components/craft-blocks.tsx';
 
 const CoreQuery = async ({ ctx, attrs, innerBlocks }: CoreBlockProps) => {
   const query_other = innerBlocks.filter(
@@ -68,9 +69,9 @@ const CoreQuery = async ({ ctx, attrs, innerBlocks }: CoreBlockProps) => {
 
   return (
     <>
-      {render_blocks_no_results.map((block, i) => ctx.nextBlock(block, i))}
-      {render_blocks.map((block, i) => ctx.nextBlock(block, i))}
-      {render_other_blocks?.map((block, i) => ctx.nextBlock(block, i))}
+      {render_blocks_no_results.map((block, i) => nextBlock(block, i, ctx))}
+      {render_blocks.map((block, i) => nextBlock(block, i, ctx))}
+      {render_other_blocks?.map((block, i) => nextBlock(block, i, ctx))}
     </>
   );
 };
