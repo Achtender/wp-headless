@@ -46,7 +46,7 @@ export function FilterPosts({
 
   const handleFilterChange = (type: string, value: string) => {
     console.log(`Filter changed: ${type} -> ${value}`);
-    const newParams = new URLSearchParams(window.location.search);
+    const newParams = new URLSearchParams(globalThis.location.search);
     newParams.delete("page");
 
     if (value === "all") {
