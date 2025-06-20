@@ -1,4 +1,5 @@
-import { CoreBlockProps } from '../core.tsx';
+import { CoreBlockProps } from '@/components/craft-blocks.tsx';
+import { nextBlock } from '@/components/craft-blocks.tsx';
 
 const CoreColumn = ({ ctx, attrs, innerBlocks }: CoreBlockProps) => {
   const styles: string[] = [];
@@ -21,7 +22,7 @@ const CoreColumn = ({ ctx, attrs, innerBlocks }: CoreBlockProps) => {
       className={['flex flex-col flex-1 gap-4', ...styles].join(' ')}
       style={inlineStyles}
     >
-      {innerBlocks.map((block, i) => ctx.nextBlock(block, i))}
+      {innerBlocks.map((block, i) => nextBlock(block, i, ctx))}
     </div>
   );
 };

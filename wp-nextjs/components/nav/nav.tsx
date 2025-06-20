@@ -16,18 +16,17 @@ export const Nav = ({ children, id }: NavProps) => {
   const stickyRef = useRef(null);
   const [stuck, setStuck] = useState(false);
 
-  useEffect(() => {
-    const observer = new globalThis.IntersectionObserver(
-      ([e]) => {
-        console.log(e.intersectionRatio)
-        setStuck(e.intersectionRatio < 1)
-      },
-      { threshold: [1] },
-    );
+  // useEffect(() => {
+  //   const observer = new globalThis.IntersectionObserver(
+  //     ([e]) => {
+  //       setStuck(e.intersectionRatio < 1)
+  //     },
+  //     { threshold: [1] },
+  //   );
 
-    if (stickyRef.current) observer.observe(stickyRef.current);
-    return () => observer.disconnect();
-  }, []);
+  //   if (stickyRef.current) observer.observe(stickyRef.current);
+  //   return () => observer.disconnect();
+  // }, []);
 
   return (
     <nav

@@ -4,7 +4,7 @@ import { Container, Section } from '@/components/craft';
 import { Inter as FontSans } from 'next/font/google';
 import { ThemeProvider } from '@/components/theme/theme-provider';
 import { ThemeToggle } from '@/components/theme/theme-toggle';
-import { Analytics } from '@vercel/analytics/react';
+// import { Analytics } from '@vercel/analytics/react';
 
 import { contentMenu, footerMenu } from '@/menu.config';
 import { siteConfig } from '@/site.config';
@@ -56,7 +56,7 @@ export default function RootLayout(
           {children}
           <Footer />
         </ThemeProvider>
-        <Analytics />
+        {/* <Analytics /> */}
       </body>
     </html>
   );

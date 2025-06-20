@@ -1,15 +1,15 @@
-import { CoreBlockProps } from '../core.tsx';
+import { CoreBlockProps } from '@/components/craft-blocks.tsx';
+import { nextBlock } from '@/components/craft-blocks.tsx';
 
 export const CorePostTitle = ({ blockName, attrs, ctx }: CoreBlockProps) => {
   if (!ctx.post) {
-    return ctx.nextBlock({
+    return nextBlock({
       blockName: 'dev/warning',
       ctx: {
         code: 'Caution',
-        message:
-          `The "${blockName}" block is restricted to usage within a query context. Ensure that it is nested within a "core/queryLoop" or a "core/group" that has an set post context.`,
+        message: `The "${blockName}" block is restricted to usage within a query context. Ensure that it is nested within a "core/queryLoop" or a "core/group" that has an set post context.`,
       },
-    });
+    }, undefined, null);
   }
 
   const content = attrs.isLink
@@ -22,11 +22,15 @@ export const CorePostTitle = ({ blockName, attrs, ctx }: CoreBlockProps) => {
       </h2>`
     : /* html */ `<h2>${ctx.post.title.raw}</h2>`;
 
-  return ctx.nextBlock({
-    blockName: 'core/heading',
-    attrs: { level: attrs.level },
-    innerContent: [content],
-  });
+  return nextBlock(
+    {
+      blockName: 'core/heading',
+      attrs: { level: attrs.level },
+      innerContent: [content],
+    },
+    undefined,
+    null
+  );
 };
 
 export default CorePostTitle;

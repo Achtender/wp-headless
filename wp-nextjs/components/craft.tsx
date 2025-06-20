@@ -6,18 +6,9 @@ import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 import * as blockSerialization from '@wordpress/block-serialization-default-parser';
-import {
-  CoreBlockProps,
-  library as core_block_library,
-} from '@/components/blocks/core';
-import {
-  library as dev_block_library,
-} from '@/components/blocks/dev';
 
-const block_library = {
-  ...core_block_library,
-  ...dev_block_library
-}
+import { renderBlock } from './craft-blocks.tsx';
+import type { CoreBlockProps } from './craft-blocks.tsx';
 
 // Utility function to merge class names
 export function cn(...inputs: ClassValue[]) {
@@ -84,8 +75,8 @@ export type GapValue = keyof typeof GAP_VALUES;
 export type ResponsiveValue<T> =
   | T
   | {
-    [K in Breakpoint]?: T;
-  };
+      [K in Breakpoint]?: T;
+    };
 
 // Box-specific props with improved type safety
 export interface BoxProps extends BaseProps {
@@ -116,18 +107,8 @@ const styles = {
       '[&_small]:text-sm [&_small]:font-medium [&_small]:leading-none',
       '[&_sub]:text-sm [&_sup]:text-sm',
     ],
-    headerSpacing: [
-      '[&_h1]:mt-8 [&_h1]:mb-4',
-      '[&_h2]:mt-8 [&_h2]:mb-4',
-      '[&_h3]:mt-6 [&_h3]:mb-3',
-      '[&_h4]:mt-6 [&_h4]:mb-3',
-      '[&_h5]:mt-4 [&_h5]:mb-2',
-      '[&_h6]:mt-4 [&_h6]:mb-2',
-    ],
-    links: [
-      '[&_a]:underline [&_a]:underline-offset-4 [&_a]:decoration-primary/50 [&_a]:transition-colors',
-      'hover:[&_a]:decoration-primary hover:[&_a]:text-primary',
-    ],
+    headerSpacing: ['[&_h1]:mt-8 [&_h1]:mb-4', '[&_h2]:mt-8 [&_h2]:mb-4', '[&_h3]:mt-6 [&_h3]:mb-3', '[&_h4]:mt-6 [&_h4]:mb-3', '[&_h5]:mt-4 [&_h5]:mb-2', '[&_h6]:mt-4 [&_h6]:mb-2'],
+    links: ['[&_a:not([data-role])]:underline [&_a]:underline-offset-4 [&_a]:decoration-primary/50 [&_a]:transition-colors', 'hover:[&_a]:decoration-primary hover:[&_a]:text-primary'],
     lists: [
       // Unordered lists
       '[&_ul]:pl-0 [&_ul]:list-none [&_ul]:space-y-2',
@@ -213,18 +194,11 @@ const baseTypographyStyles = [
   ...styles.typography.misc,
 ];
 
-const articleTypographyStyles = [
-  ...baseTypographyStyles,
-  ...styles.typography.headerSpacing,
-];
+const articleTypographyStyles = [...baseTypographyStyles, ...styles.typography.headerSpacing];
 
 // Components
 export const Layout = ({ children, className }: BaseProps) => (
-  <html
-    lang='en'
-    suppressHydrationWarning
-    className={cn('scroll-smooth antialiased focus:scroll-auto', className)}
-  >
+  <html lang='en' suppressHydrationWarning className={cn('scroll-smooth antialiased focus:scroll-auto', className)}>
     {children}
   </html>
 );
@@ -247,22 +221,8 @@ export const Container = ({ children, className, id }: BaseProps) => (
   </div>
 );
 
-export const Article = ({
-  children,
-  className,
-  id,
-  dangerouslySetInnerHTML,
-}: BaseProps & HTMLProps) => (
-  <article
-    dangerouslySetInnerHTML={dangerouslySetInnerHTML}
-    className={cn(
-      articleTypographyStyles,
-      styles.layout.spacing,
-      styles.layout.article,
-      className,
-    )}
-    id={id}
-  >
+export const Article = ({ children, className, id, dangerouslySetInnerHTML }: BaseProps & HTMLProps) => (
+  <article dangerouslySetInnerHTML={dangerouslySetInnerHTML} className={cn(articleTypographyStyles, styles.layout.spacing, styles.layout.article, className)} id={id}>
     {children}
   </article>
 );
@@ -271,8 +231,8 @@ export const Prose = ({
   children,
   className,
   id,
-  // dangerouslySetInnerHTML,
-}: BaseProps & HTMLProps) => (
+}: // dangerouslySetInnerHTML,
+BaseProps & HTMLProps) => (
   <Main
     // dangerouslySetInnerHTML={dangerouslySetInnerHTML}
     className={cn(baseTypographyStyles, styles.layout.spacing, className)}
@@ -281,79 +241,18 @@ export const Prose = ({
     {children}
   </Main>
 );
-export const Block = ({
-  dangerouslySetInnerHTML,
-}: BaseProps & HTMLProps) => {
-  return (
-    <>
-      {parseBlock(dangerouslySetInnerHTML?.__html)}
-    </>
-  );
+export const Block = ({ dangerouslySetInnerHTML }: BaseProps & HTMLProps) => {
+  return <>{parseBlock(dangerouslySetInnerHTML?.__html)}</>;
 };
 
 function parseBlock(html?: string) {
   const reactElement = blockSerialization.parse(html || '');
 
-  return (
-    <>
-      {reactElement.map((block, i) => renderBlock(block as CoreBlockProps, i))}
-    </>
-  );
-}
-
-export function renderBlock(
-  block: CoreBlockProps,
-  block_key?: React.Key,
-  block_parent_ctx?: any,
-) {
-  const clonedParentContext = block_parent_ctx
-    ? JSON.parse(JSON.stringify(block_parent_ctx)) //
-    : {};
-  const clonedBlockContext = block.ctx
-    ? JSON.parse(JSON.stringify(block.ctx))
-    : {};
-
-  let BlockComponent;
-  const block_ctx = {
-    ...clonedParentContext,
-    ...clonedBlockContext,
-    nextBlock: (block: CoreBlockProps, key: React.Key) => {
-      return renderBlock(block, key, {
-        ...clonedParentContext, //
-        ...clonedBlockContext,
-      });
-    } 
-  };
-
-  // Resolve core blocks
-  if (block.blockName && block.blockName in block_library) {
-    BlockComponent = (block_library as unknown as Record<
-      string,
-      React.ComponentType<CoreBlockProps>
-    >)[block.blockName];
-
-    return <BlockComponent {...block} key={block_key} ctx={block_ctx} />;
-  }
-
-  // Fallback for missing blocks
-  if (block.blockName) {
-    BlockComponent = (block_library as unknown as Record<
-      string,
-      React.ComponentType<CoreBlockProps>
-    >)['dev/missing'];
-
-    return <BlockComponent {...block} key={block_key} ctx={block_ctx} />;
-  }
-
-  // If no blockName is given, return null
-  return null;
+  return <>{reactElement.map((block, i) => renderBlock(block as CoreBlockProps, i))}</>;
 }
 
 // Utility function for responsive classes
-const getResponsiveClass = <T extends string | number>(
-  value: ResponsiveValue<T> | undefined,
-  classMap: Record<T, string>,
-): string => {
+const getResponsiveClass = <T extends string | number>(value: ResponsiveValue<T> | undefined, classMap: Record<T, string>): string => {
   if (!value) return '';
   if (typeof value === 'object') {
     return Object.entries(value)
@@ -367,16 +266,7 @@ const getResponsiveClass = <T extends string | number>(
   return classMap[value];
 };
 
-export const Box = ({
-  children,
-  className,
-  direction = 'row',
-  wrap = 'nowrap',
-  gap = 0,
-  cols,
-  rows,
-  id,
-}: BoxProps) => {
+export const Box = ({ children, className, direction = 'row', wrap = 'nowrap', gap = 0, cols, rows, id }: BoxProps) => {
   const directionClasses = {
     row: 'flex-row',
     col: 'flex-col',
@@ -424,7 +314,7 @@ export const Box = ({
         getResponsiveClass(gap, gapClasses),
         cols && getResponsiveClass(cols, colsClasses),
         rows && getResponsiveClass(rows, colsClasses),
-        className,
+        className
       )}
       id={id}
     >

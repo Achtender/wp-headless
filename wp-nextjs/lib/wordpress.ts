@@ -10,19 +10,7 @@ if (!baseUrl) {
   throw new Error('WORDPRESS_URL environment variable is not defined');
 }
 
-export function dangerouslySetInnerWordPressRaw(raw?: string) {
-  let normalized_raw = raw ?? '';
 
-  // Remove absolute URLs and replace with relative paths
-  normalized_raw.replace(new RegExp(`<a([^>]+)href=["']${baseUrl!.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')}/([^"']+)["']`, 'g'), `<a$1href="/$2"`);
-
-  // Remove HTML comments
-  normalized_raw = normalized_raw.replace(/<!--[\s\S]*?-->/g, '');
-
-  return {
-    dangerouslySetInnerHTML: { __html: normalized_raw },
-  };
-}
 
 function getUrl(path: string, query?: Record<string, any>) {
   // const params = query ? querystring.stringify(query) : null;
@@ -37,9 +25,8 @@ class WordPressAPIError extends Error {
   }
 }
 
-async function wordpressFetch<T>(url: string): Promise<T> {
+async function wordpressFetchResponse(url: string): Promise<Response> {
   const userAgent = 'Next.js WordPress Client';
-  // const credentials = Buffer.from(process.env.WORDPRESS_API_BASIC_AUTH || '').toString('base64');
   const credentials = btoa(unescape(encodeURIComponent(process.env.WORDPRESS_API_BASIC_AUTH || '')));
 
   const response = await fetch(url, {
@@ -53,7 +40,11 @@ async function wordpressFetch<T>(url: string): Promise<T> {
     throw new WordPressAPIError(`WordPress API request failed: ${response.statusText}\n${response.statusText}`, response.status, url);
   }
 
-  return response.json();
+  return response;
+}
+
+async function wordpressFetch<T>(url: string): Promise<T> {
+  return (await wordpressFetchResponse(url)).json();
 }
 
 export async function getSettings(): Promise<{ page_on_front: number }> {
@@ -106,6 +97,62 @@ export async function getAllPosts(filterParams?: {
 
   const url = getUrl(`/wp-json/wp/v2/${query_post_type}`, query);
   return wordpressFetch<Post[]>(url);
+}
+
+export async function getQueryPosts(filterParams?: {
+  author?: string;
+  tag?: string;
+  category?: string;
+  search?: string;
+  post_type?: string;
+  per_page?: number;
+  order?: 'asc' | 'desc';
+  order_by?: 'author' | 'date' | 'id' | 'include' | 'modified' | 'parent' | 'relevance' | 'slug' | 'include_slugs' | 'title';
+}): Promise<{
+  total_pages: number;
+  total: number;
+  posts: Post[];
+}> {
+  const query_post_type = filterParams?.post_type ?? 'posts';
+  const query: Record<string, any> = {
+    _embed: true,
+    order: filterParams?.order ?? 'desc',
+    orderby: filterParams?.order_by ?? 'date',
+    per_page: filterParams?.per_page ?? 100,
+  };
+
+  if (filterParams?.search) {
+    query.search = filterParams.search;
+
+    if (filterParams?.author) {
+      query.author = filterParams.author;
+    }
+    if (filterParams?.tag) {
+      query.tags = filterParams.tag;
+    }
+    if (filterParams?.category) {
+      query.categories = filterParams.category;
+    }
+  } else {
+    if (filterParams?.author) {
+      query.author = filterParams.author;
+    }
+    if (filterParams?.tag) {
+      query.tags = filterParams.tag;
+    }
+    if (filterParams?.category) {
+      query.categories = filterParams.category;
+    }
+  }
+
+  const url = getUrl(`/wp-json/wp/v2/${query_post_type}`, query);
+  const res = await wordpressFetchResponse(url);
+
+  return res.json().then((posts: Post[]) => ({
+    total_pages: parseInt(res.headers.get('x-wp-totalpages') ?? '0'),
+    total: parseInt(res.headers.get('x-wp-total') ?? '0'),
+    posts,
+  }));
 }
 
 export async function getPostById(id: number): Promise<Post> {

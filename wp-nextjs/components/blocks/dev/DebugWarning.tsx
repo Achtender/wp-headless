@@ -1,4 +1,5 @@
-import { CoreBlockProps } from '../core.tsx';
+import { CoreBlockProps } from '@/components/craft-blocks.tsx';
+import { nextBlock } from '@/components/craft-blocks.tsx';
 
 const DebugWarning = (
   { ctx, innerBlocks }: {
@@ -24,7 +25,7 @@ const DebugWarning = (
           role='alert'
         >
           {innerBlocks
-            ? innerBlocks.map((block, i) => ctx.nextBlock(block, i))
+            ? innerBlocks.map((block, i) => nextBlock(block, i, ctx))
             : null}
         </div>
       )
