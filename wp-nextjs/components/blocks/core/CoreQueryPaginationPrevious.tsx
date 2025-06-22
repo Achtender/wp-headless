@@ -1,12 +1,16 @@
-import { CoreBlockProps } from '@/components/craft-blocks.tsx';
+'use client';
+
+import { RenderBlock } from '@/components/craft-blocks.tsx';
 
 import { Button } from '@/components/ui/button.tsx';
 import { ArrowLeft } from 'lucide-react';
 
-const CoreQueryPaginationPrevious = ({ ctx }: CoreBlockProps) => {
+const CoreQueryPaginationPrevious = (self: RenderBlock) => {
+  const offset = self.ctx?.query?.query?.offset ?? null;
+
   return (
     <Button
-      disabled={ctx.query.offset <= 0} //
+      disabled={!offset || offset <= 0} //
       variant='outline'
       className='flex-none px-0 border w-10 text-base'
     >

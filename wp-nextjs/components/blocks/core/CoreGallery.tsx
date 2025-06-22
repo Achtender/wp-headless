@@ -1,7 +1,9 @@
-import { CoreBlockProps } from '@/components/craft-blocks.tsx';
+'use client';
+
+import { RenderBlock } from '@/components/craft-blocks.tsx';
 import { nextBlock } from '@/components/craft-blocks.tsx';
 
-const CoreGallery = ({ ctx, attrs, innerBlocks }: CoreBlockProps) => {
+const CoreGallery = ({ ctx, attrs, innerBlocks }: RenderBlock) => {
   return (
     <div className={`grid gap-4 grid-cols-${attrs.columns || 1}`}>
       {' '}

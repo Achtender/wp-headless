@@ -1,70 +1,168 @@
-import { library as core_block_library } from '@/components/blocks/core';
-import { library as dev_block_library } from '@/components/blocks/dev';
-
 import * as blockSerialization from '@wordpress/block-serialization-default-parser';
 
-export interface CoreBlockProps extends blockSerialization.ParsedBlock {
-  attrs: blockSerialization.Attributes & Record<string, any>;
-  ctx?: any;
-  key?: React.Key;
+import {
+  library as library_dev,
+  resolve as resolveDev,
+} from '@/components/blocks/dev';
+import {
+  library as library_core,
+  resolve as resolveCore,
+} from '@/components/blocks/core';
+
+import type { FeaturedMedia, Page, Post } from '@/lib/wordpress.d.ts';
+// import { JSX } from 'react';
+
+type BlockLibrary = {
+  [blockName: string]: React.ComponentType<any>;
+};
+
+const library: {
+  resolve: (self: RenderBlock) => Promise<RenderBlock>;
+  library: BlockLibrary;
+}[] = [
+  { resolve: resolveDev, library: library_dev }, //
+  { resolve: resolveCore, library: library_core },
+];
+
+export type ParsedBlock = blockSerialization.ParsedBlock;
+export interface RenderBlock extends blockSerialization.ParsedBlock {
+  children: (Element | RenderBlockComponent | null)[];
+
+  blockName: string;
+  innerBlocks: RenderBlock[];
+  attrs: any;
+
+  ctx: {
+    parent?: {
+      blockName: RenderBlock['blockName'];
+      ctx: RenderBlock['ctx'];
+    };
+
+    // dev
+    code?: string;
+    message?: string;
+
+    // core
+    fetch?: {
+      posts: (Post | Page)[];
+      total_pages: number;
+      total: number;
+    };
+    query?: {
+      query: {
+        author?: string;
+        post_type?: string;
+        search?: string;
+        order?: string;
+        order_by?: string;
+        per_page: number;
+        offset: number;
+      };
+    };
+    post?: Post | Page;
+    media?: FeaturedMedia;
+
+    [key: string]: unknown;
+  };
 }
+export type RenderBlockComponent = React.FC<RenderBlock>;
 
-const block_library = {
-  ...core_block_library,
-  ...dev_block_library,
-} as Record<string, React.ComponentType<CoreBlockProps>>;
 
-export function nextBlock(
-  block_args: unknown, //
-  key?: React.Key,
-  block_parent_ctx?: CoreBlockProps['ctx']
+export async function resolveBlock(
+  block: blockSerialization.ParsedBlock | RenderBlock,
+  parent?: RenderBlock,
+  depth: number = 0,
 ) {
-  const block = block_args as CoreBlockProps;
+  if (!block.blockName) {
+    return null;
+  }
 
-  const clonedBlockContext = block.ctx ? JSON.parse(JSON.stringify(block.ctx!)) : {};
-  const clonedParentContext = block_parent_ctx ? JSON.parse(JSON.stringify(block_parent_ctx)) : {};
+  if (depth > 50) {
+    // A "core:query/loop" can import itself.
+    throw new Error('resolveBlock: maximum recursion depth exceeded');
+  }
 
-  return renderBlock(block, key ?? 0, {
-    ...clonedParentContext, //
-    ...clonedBlockContext,
+  const self = block as RenderBlock;
+
+  self.ctx = {
+    ...self.ctx,
+    parent: parent
+      ? { blockName: parent.blockName, ctx: parent.ctx }
+      : undefined,
+  };
+
+  for (const blocks of library) {
+    if (!(self.blockName in blocks.library)) continue;
+
+    const result = await blocks.resolve(self) as RenderBlock;
+
+    if (result.innerBlocks) {
+      const nested: RenderBlock[] = [];
+
+      for (const j in result.innerBlocks.filter((_) => _.blockName)) {
+        const _ = await resolveBlock(result.innerBlocks[j], result, depth + 1);
+        if (_) nested.push(_);
+      }
+
+      result.innerBlocks = nested;
+    }
+
+    return result;
+  }
+
+  return resolveBlock({
+    ...self,
+    ctx: {
+      ...self.ctx,
+      code: 'Caution',
+      message:
+        `The "${self.blockName}" block could not be matched with block library. You may leave it as-is, convert it to custom HTML, or remove it.`,
+    },
+    blockName: 'dev/warning',
+    attrs: {},
+    innerHTML: '',
+    innerContent: [],
   });
 }
 
-export function renderBlock(block: CoreBlockProps, block_key?: React.Key, block_parent_ctx?: any) {
-  const clonedParentContext = block_parent_ctx ? JSON.parse(JSON.stringify(block_parent_ctx)) : {};
-  const clonedBlockContext = block.ctx ? JSON.parse(JSON.stringify(block.ctx)) : {};
+export function nextBlock(
+  self: RenderBlock,
+  k: React.Key,
+): React.ReactElement | null {
+  for (const blocks of library) {
+    if (!(self.blockName in blocks.library)) continue;
 
-  let BlockComponent;
-  const block_ctx = {
-    ...clonedParentContext,
-    ...clonedBlockContext,
-  };
+    const Component = blocks.library[self.blockName] as React.ComponentType<
+      any
+    >;
 
-  // Resolve core blocks
-  if (block.blockName && block.blockName in block_library) {
-    BlockComponent = block_library[block.blockName as string];
+    const nested = self.innerBlocks && self.innerBlocks.length > 0
+      ? self.innerBlocks?.filter((_) => _.blockName)?.map((_, k) =>
+        nextBlock(_, k)
+      )
+      : null;
 
-    return <BlockComponent {...block} key={block_key} ctx={block_ctx} />;
+    return  <Component key={k} {...self}>{nested}</Component> ;
   }
 
-  // Fallback for missing blocks
-  if (block.blockName) {
-    BlockComponent = block_library['dev/missing'];
-
-    return <BlockComponent {...block} key={block_key} ctx={block_ctx} />;
-  }
-
-  // If no blockName is given, return null
   return null;
 }
 
-const baseUrl =''
+const baseUrl = '';
 
 export function dangerouslySetInnerWordPressRaw(raw?: string) {
   let normalized_raw = raw ?? '';
 
   // Remove absolute URLs and replace with relative paths
-  normalized_raw = normalized_raw.replace(new RegExp(`<a([^>]+)href=["']${baseUrl!.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')}/([^"']+)["']`, 'g'), `<a$1href="/$2"`);
+  normalized_raw = normalized_raw.replace(
+    new RegExp(
+      `<a([^>]+)href=["']${
+        baseUrl!.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')
+      }/([^"']+)["']`,
+      'g',
+    ),
+    `<a$1href="/$2"`,
+  );
 
   // Remove HTML comments
   normalized_raw = normalized_raw.replace(/<!--[\s\S]*?-->/g, '');

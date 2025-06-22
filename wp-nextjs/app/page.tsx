@@ -1,11 +1,11 @@
-import { Block, Container, Prose, Section } from "@/components/craft";
-import { getPageById, getSettings } from "@/lib/wordpress";
+import { Block, Container, Prose, Section } from '@/components/craft';
+import { getPageById, getSettings } from '@/lib/wordpress';
 
 // Revalidate pages every hour
 export const revalidate = 3600;
 
-import {generateStaticParams} from "@/app/[slug]/page";
-import {generateMetadata} from "@/app/[slug]/page";
+import { generateStaticParams } from '@/app/[slug]/page';
+import { generateMetadata } from '@/app/[slug]/page';
 
 export { generateMetadata, generateStaticParams };
 

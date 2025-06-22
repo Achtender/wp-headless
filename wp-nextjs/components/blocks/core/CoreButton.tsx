@@ -1,11 +1,16 @@
-import { trimWordPressHref } from '@/components/craft-blocks.tsx';
-import { CoreBlockProps } from '@/components/craft-blocks.tsx';
+'use client';
+
+// import { trimWordPressHref } from '@/components/craft-blocks.tsx';
+import { RenderBlock } from '@/components/craft-blocks.tsx';
 
 import { Button } from '@/components/ui/button.tsx';
 import Link from 'next/link';
-// import { ArrowRight, ArrowUpRight } from 'lucide-react';
 
-const CoreButton = ({ innerContent }: CoreBlockProps) => {
+function trimWordPressHref(_:string) {
+  return _
+}
+
+const CoreButton = ({ innerContent }: RenderBlock) => {
   const content: { href?: string; target?: string; rel?: string; text?: string } =
     Array.isArray(innerContent) && innerContent.length > 0
       ? (() => {
@@ -28,9 +33,9 @@ const CoreButton = ({ innerContent }: CoreBlockProps) => {
         rel={content.rel}
         target={content.target}
         className='gap-2'
+        // passHref
       >
         {content.text}
-        {/* {content.target ? <ArrowUpRight className='w-5 h-5' /> : <ArrowRight className='w-5 h-5' />} */}
       </Link>
     </Button>
   );

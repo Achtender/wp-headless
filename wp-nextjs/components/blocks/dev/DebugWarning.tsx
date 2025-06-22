@@ -1,38 +1,27 @@
-import { CoreBlockProps } from '@/components/craft-blocks.tsx';
-import { nextBlock } from '@/components/craft-blocks.tsx';
+import { RenderBlock } from '@/components/craft-blocks.tsx';
+import type { ReactElement } from 'react';
 
-const DebugWarning = (
-  { ctx, innerBlocks }: {
-    ctx?: CoreBlockProps['ctx'];
-    innerBlocks?: CoreBlockProps['innerBlocks'];
-  },
-) => (
-  <div className='flex flex-col gap-4'>
+const DebugWarning = (self: RenderBlock & { children?: ReactElement[] }) => (
+  <div className='flex flex-col border border-orange-400 rounded overflow-hidden'>
     <div
-      className='bg-orange-100 border border-orange-400 text-orange-700 px-4 py-4 rounded relative'
+      className='bg-orange-100 text-orange-700 px-5 py-5'
       role='alert'
     >
-      <strong className='font-bold mr-1'>{ctx.code ?? 'Error'}:</strong>
-      <span className='block sm:inline'>
-        {ctx.message}
-      </span>
+      <strong className='font-bold mr-1'>{self.ctx?.code ?? 'Error'}:</strong>
+      {self.ctx?.message ?? 'Something went wrong.'}
     </div>
 
-    {innerBlocks && innerBlocks.length > 0
+    {self.children && self.children.length > 0
       ? (
         <div
-          className='border border-orange-400 px-4 py-4 rounded relative flex flex-col gap-4'
+          className='border-t border-orange-400 px-5 py-5 flex flex-col gap-4'
           role='alert'
         >
-          {innerBlocks
-            ? innerBlocks.map((block, i) => nextBlock(block, i, ctx))
-            : null}
+          {self.children}
         </div>
       )
       : null}
   </div>
 );
 
-
 export default DebugWarning;
-

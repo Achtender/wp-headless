@@ -1,20 +1,22 @@
-import { CoreBlockProps } from '@/components/craft-blocks.tsx';
-import { nextBlock } from '@/components/craft-blocks.tsx';
+'use client';
 
-const CoreColumn = ({ ctx, attrs, innerBlocks }: CoreBlockProps) => {
+import { RenderBlock } from '@/components/craft-blocks.tsx';
+// import { nextBlock } from '@/components/craft-blocks.tsx';
+
+const CoreColumn = (self: RenderBlock) => {
   const styles: string[] = [];
   const inlineStyles: Record<string, string> = {};
 
-  if (attrs.verticalAlignment === 'bottom') {
+  if (self.attrs.verticalAlignment === 'bottom') {
     styles.push('justify-end');
   }
 
-  if (attrs.verticalAlignment === 'center') {
+  if (self.attrs.verticalAlignment === 'center') {
     styles.push('justify-center');
   }
 
-  if (attrs.width) {
-    inlineStyles['--aspect-ratio'] = attrs.width;
+  if (self.attrs.width) {
+    inlineStyles['--aspect-ratio'] = self.attrs.width;
   }
 
   return (
@@ -22,7 +24,7 @@ const CoreColumn = ({ ctx, attrs, innerBlocks }: CoreBlockProps) => {
       className={['flex flex-col flex-1 gap-4', ...styles].join(' ')}
       style={inlineStyles}
     >
-      {innerBlocks.map((block, i) => nextBlock(block, i, ctx))}
+      {self.children}
     </div>
   );
 };

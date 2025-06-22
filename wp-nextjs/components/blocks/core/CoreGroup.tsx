@@ -1,61 +1,63 @@
-import { CoreBlockProps } from '@/components/craft-blocks.tsx';
-import { nextBlock } from '@/components/craft-blocks.tsx';
+'use client';
 
-const CoreGroup = ({ ctx, attrs, innerBlocks }: CoreBlockProps) => {
+import { RenderBlock } from '@/components/craft-blocks.tsx';
+// import { nextBlock } from '@/components/craft-blocks.tsx';
+
+const CoreGroup = (self: RenderBlock) => {
   const styles: string[] = [];
   const inlineStyles: Record<string, string> = {};
 
-  if (attrs?.layout.type === 'flex') {
+  if (self.attrs?.layout.type === 'flex') {
     // Use flex layout with specified orientation
-    if (attrs?.layout.orientation === 'vertical') {
+    if (self.attrs?.layout.orientation === 'vertical') {
       styles.push('flex flex-col');
     } else {
       styles.push('flex flex-row');
     }
-  } else if (attrs?.layout.type === 'grid' && attrs?.layout.minimumColumnWidth === null) {
+  } else if (self.attrs?.layout.type === 'grid' && self.attrs?.layout.minimumColumnWidth === null) {
     // Use grid layout with specified column count
-    if (attrs?.layout.columnCount) {
-      styles.push(`grid grid-cols-${attrs?.layout.columnCount}`);
+    if (self.attrs?.layout.columnCount) {
+      styles.push(`grid grid-cols-${self.attrs?.layout.columnCount}`);
     } else {
       styles.push('grid grid-cols-1');
     }
-  } else if (attrs?.layout.type === 'grid') {
+  } else if (self.attrs?.layout.type === 'grid') {
     // Use auto-fill with minimum column width
     styles.push('grid');
     styles.push('[grid-template-columns:repeat(auto-fill,minmax(var(--min-col-width),1fr))]');
-    inlineStyles['--min-col-width'] = `min(100%, ${attrs?.layout.minimumColumnWidth})`;
+    inlineStyles['--min-col-width'] = `min(100%, ${self.attrs?.layout.minimumColumnWidth})`;
   } else {
     // Default to block layout
     styles.push('flex flex-col');
   }
 
   // justify content
-  if (attrs?.layout.justifyContent == 'space-between') {
+  if (self.attrs?.layout.justifyContent == 'space-between') {
     styles.push('justify-between');
   }
-  if (attrs?.layout.justifyContent == 'right') {
+  if (self.attrs?.layout.justifyContent == 'right') {
     styles.push('justify-end');
   }
-  if (attrs?.layout.justifyContent == 'center') {
+  if (self.attrs?.layout.justifyContent == 'center') {
     styles.push('justify-center');
   }
 
   // align items
-  if (attrs?.layout.verticalAlignment == 'bottom') {
+  if (self.attrs?.layout.verticalAlignment == 'bottom') {
     styles.push('items-end');
   }
-  if (attrs?.layout.verticalAlignment == 'center') {
+  if (self.attrs?.layout.verticalAlignment == 'center') {
     styles.push('items-center');
   }
 
   // self
-  if (attrs?.style?.layout?.selfStretch == 'fill') {
+  if (self.attrs?.style?.layout?.selfStretch == 'fill') {
     styles.push('flex-1');
   }
 
   return (
     <div className={['gap-4', ...styles].join(' ')} style={inlineStyles}>
-      {innerBlocks.map((block, i) => nextBlock(block, i, ctx))}
+      {self.children}
     </div>
   );
 };

@@ -1,36 +1,40 @@
-import { CoreBlockProps } from '@/components/craft-blocks.tsx';
-import { getFeaturedMediaById } from '@/lib/wordpress';
+'use client';
+
 import Image from 'next/image';
+import { RenderBlock } from '@/components/craft-blocks.tsx';
 
-const CoreImage = async ({ attrs }: CoreBlockProps) => {
-  const style = ['flex-1', 'h-auto', 'object-cover', 'aspect-[var(--aspect-ratio)]'];
-  const inlineStyles: Record<string, string> = {};
-  inlineStyles['--aspect-ratio'] = attrs.aspectRatio;
+const CoreImage = (self: RenderBlock) => {
+  const media_placeholder = self.ctx.media_placeholder;
+  const media = self.ctx.media?.media_details;
 
-  const media = await getFeaturedMediaById(attrs.id); // TODO(@all): query media
-  const media_source = media.media_details.sizes;
+  if (!media) return null;
 
-  const media_source_k = attrs.sizeSlug ?? 'medium_large';
-  const media_source_files = media_source[media_source_k].sources;
-  const media_source_url =
-    'image/avif' in media_source_files //
-      ? media_source_files['image/avif'].source_url
-      : media_source_files['image/jpeg'].source_url;
+  // Pick the best available size as fallback
+  const src = media.sizes?.large?.source_url ||
+    // media.sizes?.medium_large?.source_url ||
+    media.sizes?.medium?.source_url ||
+    media.sizes?.full?.source_url;
+
+  // Optionally, you can set width/height for layout
+  const width = media.sizes?.large?.width || media.width;
+  const height = media.sizes?.large?.height || media.height;
 
   return (
-    <div className='flex flex-col items-center gap-2'>
-      <Image
-        src={media_source_url}
-        alt={attrs.alt || 'an image'}
-        className={style.join(' ')}
-        style={inlineStyles}
-        width={media_source[media_source_k].width}
-        height={media_source[media_source_k].height}
-        loading='lazy'
-        fetchPriority='low'
-      />
-      {/* <span className="block text-center text-xs">{attrs.id}</span> */}
-    </div>
+    <Image
+      src={src}
+      alt={self.attrs.alt || ''}
+      width={width}
+      height={height}
+      sizes='(min-width: 1024px) 800px, (min-width: 600px) 400px, 100vw'
+      className='flex-1 h-auto object-cover'
+      style={{ aspectRatio: self.attrs.aspectRatio }}
+      {...(media_placeholder
+        ? {
+          placeholder: 'blur',
+          blurDataURL: media_placeholder?.blurDataURL,
+        }
+        : {})}
+    />
   );
 };
 

@@ -201,7 +201,6 @@ export interface TemplatePart {
   title: {
     raw: string;
     rendered: string;
-    raw: string;
   };
   description: string;
   status: "publish" | "future" | "draft" | "pending" | "private";

@@ -7,8 +7,8 @@ import { twMerge } from 'tailwind-merge';
 
 import * as blockSerialization from '@wordpress/block-serialization-default-parser';
 
-import { renderBlock } from './craft-blocks.tsx';
-import type { CoreBlockProps } from './craft-blocks.tsx';
+import { nextBlock, resolveBlock } from './craft-blocks.tsx';
+import type { RenderBlock } from './craft-blocks.tsx';
 
 // Utility function to merge class names
 export function cn(...inputs: ClassValue[]) {
@@ -75,8 +75,8 @@ export type GapValue = keyof typeof GAP_VALUES;
 export type ResponsiveValue<T> =
   | T
   | {
-      [K in Breakpoint]?: T;
-    };
+    [K in Breakpoint]?: T;
+  };
 
 // Box-specific props with improved type safety
 export interface BoxProps extends BaseProps {
@@ -100,15 +100,26 @@ const styles = {
       '[&_h5]:text-lg [&_h5]:font-medium [&_h5]:tracking-tight',
       '[&_h6]:text-base [&_h6]:font-medium [&_h6]:tracking-tight',
       // Text elements
-      '[&_p]:text-base [&_p]:leading-7 [&_p]:mb-4',
+      // '[&_p]:text-base [&_p]:leading-7 [&_p]:mb-4',
+      '[&_p]:text-base [&_p]:leading-7',
       '[&_strong]:font-semibold',
       '[&_em]:italic',
       '[&_del]:line-through',
       '[&_small]:text-sm [&_small]:font-medium [&_small]:leading-none',
       '[&_sub]:text-sm [&_sup]:text-sm',
     ],
-    headerSpacing: ['[&_h1]:mt-8 [&_h1]:mb-4', '[&_h2]:mt-8 [&_h2]:mb-4', '[&_h3]:mt-6 [&_h3]:mb-3', '[&_h4]:mt-6 [&_h4]:mb-3', '[&_h5]:mt-4 [&_h5]:mb-2', '[&_h6]:mt-4 [&_h6]:mb-2'],
-    links: ['[&_a:not([data-role])]:underline [&_a]:underline-offset-4 [&_a]:decoration-primary/50 [&_a]:transition-colors', 'hover:[&_a]:decoration-primary hover:[&_a]:text-primary'],
+    headerSpacing: [
+      '[&_h1]:mt-8 [&_h1]:mb-4',
+      '[&_h2]:mt-8 [&_h2]:mb-4',
+      '[&_h3]:mt-6 [&_h3]:mb-3',
+      '[&_h4]:mt-6 [&_h4]:mb-3',
+      '[&_h5]:mt-4 [&_h5]:mb-2',
+      '[&_h6]:mt-4 [&_h6]:mb-2',
+    ],
+    links: [
+      '[&_a:not([data-role])]:underline [&_a]:underline-offset-4 [&_a]:decoration-primary/50 [&_a]:transition-colors',
+      'hover:[&_a]:decoration-primary hover:[&_a]:text-primary',
+    ],
     lists: [
       // Unordered lists
       '[&_ul]:pl-0 [&_ul]:list-none [&_ul]:space-y-2',
@@ -194,11 +205,18 @@ const baseTypographyStyles = [
   ...styles.typography.misc,
 ];
 
-const articleTypographyStyles = [...baseTypographyStyles, ...styles.typography.headerSpacing];
+const articleTypographyStyles = [
+  ...baseTypographyStyles,
+  ...styles.typography.headerSpacing,
+];
 
 // Components
 export const Layout = ({ children, className }: BaseProps) => (
-  <html lang='en' suppressHydrationWarning className={cn('scroll-smooth antialiased focus:scroll-auto', className)}>
+  <html
+    lang='en'
+    suppressHydrationWarning
+    className={cn('scroll-smooth antialiased focus:scroll-auto', className)}
+  >
     {children}
   </html>
 );
@@ -221,8 +239,19 @@ export const Container = ({ children, className, id }: BaseProps) => (
   </div>
 );
 
-export const Article = ({ children, className, id, dangerouslySetInnerHTML }: BaseProps & HTMLProps) => (
-  <article dangerouslySetInnerHTML={dangerouslySetInnerHTML} className={cn(articleTypographyStyles, styles.layout.spacing, styles.layout.article, className)} id={id}>
+export const Article = (
+  { children, className, id, dangerouslySetInnerHTML }: BaseProps & HTMLProps,
+) => (
+  <article
+    dangerouslySetInnerHTML={dangerouslySetInnerHTML}
+    className={cn(
+      articleTypographyStyles,
+      styles.layout.spacing,
+      styles.layout.article,
+      className,
+    )}
+    id={id}
+  >
     {children}
   </article>
 );
@@ -232,7 +261,7 @@ export const Prose = ({
   className,
   id,
 }: // dangerouslySetInnerHTML,
-BaseProps & HTMLProps) => (
+  BaseProps & HTMLProps) => (
   <Main
     // dangerouslySetInnerHTML={dangerouslySetInnerHTML}
     className={cn(baseTypographyStyles, styles.layout.spacing, className)}
@@ -241,18 +270,32 @@ BaseProps & HTMLProps) => (
     {children}
   </Main>
 );
-export const Block = ({ dangerouslySetInnerHTML }: BaseProps & HTMLProps) => {
-  return <>{parseBlock(dangerouslySetInnerHTML?.__html)}</>;
+export const Block = async (
+  { dangerouslySetInnerHTML }: BaseProps & HTMLProps,
+) => {
+  return <>{await parseBlock(dangerouslySetInnerHTML?.__html)}</>;
 };
 
-function parseBlock(html?: string) {
+async function parseBlock(html?: string) {
   const reactElement = blockSerialization.parse(html || '');
+  const blockMap = await Promise.all(
+    reactElement //
+      .filter((_) => _.blockName)
+      .map((_) => resolveBlock(_)),
+  );
 
-  return <>{reactElement.map((block, i) => renderBlock(block as CoreBlockProps, i))}</>;
+  return (
+    <>
+      {blockMap.map((block, k) => nextBlock(block as RenderBlock, k))}
+    </>
+  );
 }
 
 // Utility function for responsive classes
-const getResponsiveClass = <T extends string | number>(value: ResponsiveValue<T> | undefined, classMap: Record<T, string>): string => {
+const getResponsiveClass = <T extends string | number>(
+  value: ResponsiveValue<T> | undefined,
+  classMap: Record<T, string>,
+): string => {
   if (!value) return '';
   if (typeof value === 'object') {
     return Object.entries(value)
@@ -266,7 +309,18 @@ const getResponsiveClass = <T extends string | number>(value: ResponsiveValue<T>
   return classMap[value];
 };
 
-export const Box = ({ children, className, direction = 'row', wrap = 'nowrap', gap = 0, cols, rows, id }: BoxProps) => {
+export const Box = (
+  {
+    children,
+    className,
+    direction = 'row',
+    wrap = 'nowrap',
+    gap = 0,
+    cols,
+    rows,
+    id,
+  }: BoxProps,
+) => {
   const directionClasses = {
     row: 'flex-row',
     col: 'flex-col',
@@ -314,7 +368,7 @@ export const Box = ({ children, className, direction = 'row', wrap = 'nowrap', g
         getResponsiveClass(gap, gapClasses),
         cols && getResponsiveClass(cols, colsClasses),
         rows && getResponsiveClass(rows, colsClasses),
-        className
+        className,
       )}
       id={id}
     >

@@ -1,7 +1,11 @@
-import DebugMissing from '@/components/blocks/dev/DebugMissing';
+import { RenderBlock } from '@/components/craft-blocks.tsx';
+
 import DebugWarning from '@/components/blocks/dev/DebugWarning';
 
 export const library = {
-  'dev/missing': DebugMissing,
   'dev/warning': DebugWarning,
 };
+
+export async function resolve(self: RenderBlock): Promise<RenderBlock> {
+  return self;
+}

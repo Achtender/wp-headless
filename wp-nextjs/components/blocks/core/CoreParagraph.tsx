@@ -1,13 +1,9 @@
-import { CoreBlockProps } from '@/components/craft-blocks.tsx';
-import { dangerouslySetInnerWordPressRaw } from '@/components/craft-blocks.tsx';
+'use client';
 
-const CoreParagraph = ({ innerContent }: CoreBlockProps) => {
-  const content =
-    Array.isArray(innerContent) && innerContent.length > 0 //
-      ? innerContent.join('').trim()
-      : '';
+import { RenderBlock } from '@/components/craft-blocks.tsx';
 
-  return <div {...dangerouslySetInnerWordPressRaw(content)}></div>;
+const CoreParagraph = (self: RenderBlock) => {
+  return <div dangerouslySetInnerHTML={{ __html: self.ctx.content as string }}></div>;
 };
 
 export default CoreParagraph;
