@@ -1,32 +1,21 @@
 'use client';
 
+import { useContext } from 'react';
 import { RenderBlock } from '@/components/craft-blocks.tsx';
-import { nextBlock } from '@/components/craft-blocks.tsx';
 
-const CorePostFeaturedImage = ({ ctx, blockName, attrs }: RenderBlock) => {
-  if (!ctx.post) {
-    return nextBlock(
-      {
-        blockName: 'dev/warning',
-        ctx: {
-          code: 'Caution',
-          message:
-            `The "${blockName}" block is restricted to usage within a query context. Ensure that it is nested within a "core/queryLoop" or a "core/group" that has an set post context.`,
-        },
-      },
-      undefined,
-      null,
-    );
-  }
+import CoreImage from '@/components/blocks/core/CoreImage.tsx';
 
-  return nextBlock(
-    {
-      blockName: 'core/image',
-      attrs: { ...attrs, id: ctx.post.featured_media },
-    },
-    undefined,
-    null,
-  );
+import { ScopeContext } from '@/components/craft-helpers.tsx';
+
+const CorePostFeaturedImage = (self: RenderBlock) => {
+  const scope = useContext(ScopeContext);
+  const media = scope?._embedded?.['wp:featuredmedia']?.[0];
+
+  if (!scope || !media) return null;
+
+  const image_wrap = { ...self, ctx: { ...self.ctx, media } };
+
+  return <CoreImage {...image_wrap} blockName='core/image' />;
 };
 
 export default CorePostFeaturedImage;

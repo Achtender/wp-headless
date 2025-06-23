@@ -6,7 +6,7 @@ interface WPEntity {
   modified: string;
   modified_gmt: string;
   slug: string;
-  status: "publish" | "future" | "draft" | "pending" | "private";
+  status: 'publish' | 'future' | 'draft' | 'pending' | 'private';
   link: string;
   guid: {
     rendered: string;
@@ -67,24 +67,27 @@ export interface Post extends WPEntity {
   excerpt: RenderedContent;
   author: number;
   featured_media: number;
-  comment_status: "open" | "closed";
-  ping_status: "open" | "closed";
+  comment_status: 'open' | 'closed';
+  ping_status: 'open' | 'closed';
   sticky: boolean;
   template: string;
   format:
-    | "standard"
-    | "aside"
-    | "chat"
-    | "gallery"
-    | "link"
-    | "image"
-    | "quote"
-    | "status"
-    | "video"
-    | "audio";
+    | 'standard'
+    | 'aside'
+    | 'chat'
+    | 'gallery'
+    | 'link'
+    | 'image'
+    | 'quote'
+    | 'status'
+    | 'video'
+    | 'audio';
   categories: number[];
   tags: number[];
   meta: Record<string, unknown>;
+  _embedded?: {
+    'wp:featuredmedia'?: [FeaturedMedia];
+  };
 }
 
 export interface Page extends WPEntity {
@@ -95,10 +98,13 @@ export interface Page extends WPEntity {
   featured_media: number;
   parent: number;
   menu_order: number;
-  comment_status: "open" | "closed";
-  ping_status: "open" | "closed";
+  comment_status: 'open' | 'closed';
+  ping_status: 'open' | 'closed';
   template: string;
   meta: Record<string, unknown>;
+  _embedded?: {
+    'wp:featuredmedia'?: [FeaturedMedia];
+  };
 }
 
 // Taxonomy types
@@ -113,12 +119,12 @@ interface Taxonomy {
 }
 
 export interface Category extends Taxonomy {
-  taxonomy: "category";
+  taxonomy: 'category';
   parent: number;
 }
 
 export interface Tag extends Taxonomy {
-  taxonomy: "post_tag";
+  taxonomy: 'post_tag';
 }
 
 export interface Author {
@@ -203,7 +209,7 @@ export interface TemplatePart {
     rendered: string;
   };
   description: string;
-  status: "publish" | "future" | "draft" | "pending" | "private";
+  status: 'publish' | 'future' | 'draft' | 'pending' | 'private';
   wp_id: number;
   has_theme_file: boolean;
   author: number;
@@ -232,10 +238,10 @@ export interface FilterBarProps {
   authors: Author[];
   tags: Tag[];
   categories: Category[];
-  selectedAuthor?: Author["id"];
-  selectedTag?: Tag["id"];
-  selectedCategory?: Category["id"];
-  onAuthorChange?: (authorId: Author["id"] | undefined) => void;
-  onTagChange?: (tagId: Tag["id"] | undefined) => void;
-  onCategoryChange?: (categoryId: Category["id"] | undefined) => void;
+  selectedAuthor?: Author['id'];
+  selectedTag?: Tag['id'];
+  selectedCategory?: Category['id'];
+  onAuthorChange?: (authorId: Author['id'] | undefined) => void;
+  onTagChange?: (tagId: Tag['id'] | undefined) => void;
+  onCategoryChange?: (categoryId: Category['id'] | undefined) => void;
 }

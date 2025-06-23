@@ -33,16 +33,11 @@ export interface RenderBlock extends blockSerialization.ParsedBlock {
   attrs: any;
 
   ctx: {
-    parent?: {
-      blockName: RenderBlock['blockName'];
-      ctx: RenderBlock['ctx'];
-    };
-
-    // dev
+    // dev-only context
     code?: string;
     message?: string;
 
-    // core
+    // context
     fetch?: {
       posts: (Post | Page)[];
       total_pages: number;
@@ -59,8 +54,8 @@ export interface RenderBlock extends blockSerialization.ParsedBlock {
         offset: number;
       };
     };
-    post?: Post | Page;
-    media?: FeaturedMedia;
+    scope?: Post | Page;
+    // media?: FeaturedMedia;
 
     [key: string]: unknown;
   };
@@ -70,7 +65,7 @@ export type RenderBlockComponent = React.FC<RenderBlock>;
 
 export async function resolveBlock(
   block: blockSerialization.ParsedBlock | RenderBlock,
-  parent?: RenderBlock,
+  // parent?: RenderBlock,
   depth: number = 0,
 ) {
   if (!block.blockName) {
@@ -85,10 +80,10 @@ export async function resolveBlock(
   const self = block as RenderBlock;
 
   self.ctx = {
-    ...self.ctx,
-    parent: parent
-      ? { blockName: parent.blockName, ctx: parent.ctx }
-      : undefined,
+    ...(self.ctx ?? {}),
+    // parent: parent
+    //   ? { blockName: parent.blockName, ctx: parent.ctx }
+    //   : undefined,
   };
 
   for (const blocks of library) {
@@ -100,7 +95,8 @@ export async function resolveBlock(
       const nested: RenderBlock[] = [];
 
       for (const j in result.innerBlocks.filter((_) => _.blockName)) {
-        const _ = await resolveBlock(result.innerBlocks[j], result, depth + 1);
+        // const _ = await resolveBlock(result.innerBlocks[j], result, depth + 1);
+        const _ = await resolveBlock(result.innerBlocks[j],  depth + 1);
         if (_) nested.push(_);
       }
 

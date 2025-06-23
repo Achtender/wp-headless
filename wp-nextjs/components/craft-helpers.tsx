@@ -1,4 +1,21 @@
+import React from 'react';
 import type { RenderBlock } from './craft-blocks.tsx';
+
+export const ScopeContext = React.createContext<
+  undefined | RenderBlock['ctx']['scope']
+>(undefined);
+
+export const QueryContext = React.createContext<
+  undefined | RenderBlock['ctx']['query']
+>(undefined);
+
+export const FetchContext = React.createContext<
+  undefined | RenderBlock['ctx']['fetch']
+>(undefined);
+
+export const MediaContext = React.createContext<
+  undefined | RenderBlock['ctx']['media']
+>(undefined);
 
 export function findInParentCtx(
   self: RenderBlock,
