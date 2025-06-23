@@ -1,16 +1,15 @@
 import * as blockSerialization from '@wordpress/block-serialization-default-parser';
+import type { Page, Post } from '@/lib/wordpress.d.ts';
 
 import {
-  library as library_dev,
-  resolve as resolveDev,
-} from '@/components/blocks/dev';
+  library as library_plugin,
+  resolve as resolvePlugin,
+} from '@/components/blocks/plugin';
 import {
   library as library_core,
   resolve as resolveCore,
 } from '@/components/blocks/core';
 
-import type { FeaturedMedia, Page, Post } from '@/lib/wordpress.d.ts';
-// import { JSX } from 'react';
 
 type BlockLibrary = {
   [blockName: string]: React.ComponentType<any>;
@@ -20,19 +19,18 @@ const library: {
   resolve: (self: RenderBlock) => Promise<RenderBlock>;
   library: BlockLibrary;
 }[] = [
-  { resolve: resolveDev, library: library_dev }, //
+  { resolve: resolvePlugin, library: library_plugin }, //
   { resolve: resolveCore, library: library_core },
 ];
 
 export type ParsedBlock = blockSerialization.ParsedBlock;
 export interface RenderBlock extends blockSerialization.ParsedBlock {
-  children: (Element | RenderBlockComponent | null)[];
+  // children?: (Element | RenderBlockComponent | null)[];
 
   blockName: string;
-  innerBlocks: RenderBlock[];
   attrs: any;
-
-  ctx: {
+  innerBlocks?: RenderBlock[];
+  ctx?: {
     // dev-only context
     code?: string;
     message?: string;

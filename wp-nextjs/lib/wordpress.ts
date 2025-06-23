@@ -3,16 +3,21 @@
 // Types are imported from `wp.d.ts`
 
 import querystring from 'query-string';
-import type { Author, Category, FeaturedMedia, Page, Post, Tag } from './wordpress.d';
+import type {
+  Author,
+  Category,
+  FeaturedMedia,
+  Page,
+  Post,
+  Tag,
+} from './wordpress.d';
 const baseUrl = process.env.WORDPRESS_URL;
 
 if (!baseUrl) {
   throw new Error('WORDPRESS_URL environment variable is not defined');
 }
 
-
-
-function getUrl(path: string, query?: Record<string, any>) {
+export function getUrl(path: string, query?: Record<string, any>) {
   // const params = query ? querystring.stringify(query) : null;
   const params = querystring.stringify({ context: 'edit', ...(query ?? {}) });
   return `${baseUrl}${path}${params ? `?${params}` : ''}`;
@@ -27,7 +32,9 @@ class WordPressAPIError extends Error {
 
 async function wordpressFetchResponse(url: string): Promise<Response> {
   const userAgent = 'Next.js WordPress Client';
-  const credentials = btoa(unescape(encodeURIComponent(process.env.WORDPRESS_API_BASIC_AUTH || '')));
+  const credentials = btoa(
+    unescape(encodeURIComponent(process.env.WORDPRESS_API_BASIC_AUTH || '')),
+  );
 
   const response = await fetch(url, {
     headers: {
@@ -37,13 +44,17 @@ async function wordpressFetchResponse(url: string): Promise<Response> {
   });
 
   if (!response.ok) {
-    throw new WordPressAPIError(`WordPress API request failed: ${response.statusText}\n${response.statusText}`, response.status, url);
+    throw new WordPressAPIError(
+      `WordPress API request failed: ${response.statusText}\n${response.statusText}`,
+      response.status,
+      url,
+    );
   }
 
   return response;
 }
 
-async function wordpressFetch<T>(url: string): Promise<T> {
+export async function wordpressFetch<T>(url: string): Promise<T> {
   return (await wordpressFetchResponse(url)).json();
 }
 
@@ -61,7 +72,17 @@ export async function getAllPosts(filterParams?: {
   post_type?: string;
   per_page?: number;
   order?: 'asc' | 'desc';
-  order_by?: 'author' | 'date' | 'id' | 'include' | 'modified' | 'parent' | 'relevance' | 'slug' | 'include_slugs' | 'title';
+  order_by?:
+    | 'author'
+    | 'date'
+    | 'id'
+    | 'include'
+    | 'modified'
+    | 'parent'
+    | 'relevance'
+    | 'slug'
+    | 'include_slugs'
+    | 'title';
 }): Promise<Post[]> {
   const query_post_type = filterParams?.post_type ?? 'posts';
   const query: Record<string, any> = {
@@ -107,19 +128,34 @@ export async function getQueryPosts(filterParams?: {
   post_type?: string;
   per_page?: number;
   order?: 'asc' | 'desc';
-  order_by?: 'author' | 'date' | 'id' | 'include' | 'modified' | 'parent' | 'relevance' | 'slug' | 'include_slugs' | 'title';
+  order_by?:
+    | 'author'
+    | 'date'
+    | 'id'
+    | 'include'
+    | 'modified'
+    | 'parent'
+    | 'relevance'
+    | 'slug'
+    | 'include_slugs'
+    | 'title';
 }): Promise<{
   total_pages: number;
   total: number;
   posts: Post[];
 }> {
-  const query_post_type = filterParams?.post_type ?? 'posts';
+  let query_post_type = filterParams?.post_type ?? 'posts';
   const query: Record<string, any> = {
     _embed: true,
     order: filterParams?.order ?? 'desc',
     orderby: filterParams?.order_by ?? 'date',
     per_page: filterParams?.per_page ?? 100,
   };
+
+  if (query_post_type === 'post') {
+    // api entry for `post` is `posts`
+    query_post_type = 'posts';
+  }
 
   if (filterParams?.search) {
     query.search = filterParams.search;
@@ -160,7 +196,10 @@ export async function getPostById(id: number): Promise<Post> {
   return wordpressFetch<Post>(url);
 }
 
-export async function getPostBySlug(slug: string, type?: string): Promise<Post> {
+export async function getPostBySlug(
+  slug: string,
+  type?: string,
+): Promise<Post> {
   const url = getUrl(`/wp-json/wp/v2/${type ?? 'posts'}`, { slug });
   const response = await wordpressFetch<Post[]>(url);
   return response[0];
@@ -250,13 +289,17 @@ export async function getPostsByAuthor(authorId: number): Promise<Post[]> {
   return wordpressFetch<Post[]>(url);
 }
 
-export async function getPostsByAuthorSlug(authorSlug: string): Promise<Post[]> {
+export async function getPostsByAuthorSlug(
+  authorSlug: string,
+): Promise<Post[]> {
   const author = await getAuthorBySlug(authorSlug);
   const url = getUrl('/wp-json/wp/v2/posts', { author: author.id });
   return wordpressFetch<Post[]>(url);
 }
 
-export async function getPostsByCategorySlug(categorySlug: string): Promise<Post[]> {
+export async function getPostsByCategorySlug(
+  categorySlug: string,
+): Promise<Post[]> {
   const category = await getCategoryBySlug(categorySlug);
   const url = getUrl('/wp-json/wp/v2/posts', { categories: category.id });
   return wordpressFetch<Post[]>(url);
