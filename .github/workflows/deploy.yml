@@ -11,13 +11,6 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
 
-    env:
-      WORDPRESS_URL: ${{ vars.WORDPRESS_URL }}
-      WORDPRESS_HOSTNAME: ${{ vars.WORDPRESS_HOSTNAME }}
-      WORDPRESS_WEBHOOK_SECRET: ${{ vars.WORDPRESS_WEBHOOK_SECRET }}
-      WORDPRESS_API_BASIC_AUTH: ${{ vars.WORDPRESS_API_BASIC_AUTH }}
-
-
     permissions:
       id-token: write # Needed for auth with Deno Deploy
       contents: read # Needed to clone the repository
@@ -39,18 +32,14 @@ jobs:
       - name: Install step
         run: 'npm install'
 
-      - uses: 1arp/create-a-file-action@0.4.5
-        with:
-          isAbsolutePath: false
-          file: '.env'
-          content: |
-            WORDPRESS_URL: ${{ vars.WORDPRESS_URL }}
-            WORDPRESS_HOSTNAME: ${{ vars.WORDPRESS_HOSTNAME }}
-            WORDPRESS_WEBHOOK_SECRET: ${{ vars.WORDPRESS_WEBHOOK_SECRET }}
-            WORDPRESS_API_BASIC_AUTH: ${{ vars.WORDPRESS_API_BASIC_AUTH }}
-
       - name: Build step
         run: 'npm run build-deno'
+        env:
+          WORDPRESS_URL: ${{ vars.WORDPRESS_URL }}
+          WORDPRESS_HOSTNAME: ${{ vars.WORDPRESS_HOSTNAME }}
+          WORDPRESS_WEBHOOK_SECRET: ${{ vars.WORDPRESS_WEBHOOK_SECRET }}
+          WORDPRESS_API_BASIC_AUTH: ${{ vars.WORDPRESS_API_BASIC_AUTH }}
+    
 
       - name: Upload to Deno Deploy
         uses: denoland/deployctl@v1
