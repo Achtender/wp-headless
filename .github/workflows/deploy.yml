@@ -5,16 +5,18 @@ on:
     branches: wp-nextjs
   pull_request:
     branches: wp-nextjs
-env:
-  WORDPRESS_URL: ${{ vars.WORDPRESS_URL }}
-  WORDPRESS_HOSTNAME: ${{ vars.WORDPRESS_HOSTNAME }}
-  WORDPRESS_WEBHOOK_SECRET: ${{ vars.WORDPRESS_WEBHOOK_SECRET }}
-  WORDPRESS_API_BASIC_AUTH: ${{ vars.WORDPRESS_API_BASIC_AUTH }}
 
 jobs:
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
+
+    env:
+      WORDPRESS_URL: ${{ vars.WORDPRESS_URL }}
+      WORDPRESS_HOSTNAME: ${{ vars.WORDPRESS_HOSTNAME }}
+      WORDPRESS_WEBHOOK_SECRET: ${{ vars.WORDPRESS_WEBHOOK_SECRET }}
+      WORDPRESS_API_BASIC_AUTH: ${{ vars.WORDPRESS_API_BASIC_AUTH }}
+
 
     permissions:
       id-token: write # Needed for auth with Deno Deploy
