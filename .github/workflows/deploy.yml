@@ -39,8 +39,19 @@ jobs:
       - name: Install step
         run: 'npm install'
 
+      - uses: 1arp/create-a-file-action@0.4.5
+        with:
+          path: '.'
+          isAbsolutePath: false
+          file: '.env'
+          content: |
+            WORDPRESS_URL: ${{ vars.WORDPRESS_URL }}
+            WORDPRESS_HOSTNAME: ${{ vars.WORDPRESS_HOSTNAME }}
+            WORDPRESS_WEBHOOK_SECRET: ${{ vars.WORDPRESS_WEBHOOK_SECRET }}
+            WORDPRESS_API_BASIC_AUTH: ${{ vars.WORDPRESS_API_BASIC_AUTH }}
+
       - name: Build step
-        run: 'npm run build && (cp -r public .next/standalone/public; cp -r .next/static .next/standalone/.next/static; mv .next/standalone/server.js .next/standalone/server.cjs)'
+        run: 'npm run build-deno'
 
       - name: Upload to Deno Deploy
         uses: denoland/deployctl@v1

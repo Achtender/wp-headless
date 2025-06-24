@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbo",
-    "build": "next build && npm run obfuscate-css",
+    "build": "next build",
+    "build-deno": "npm run build && (cp -r public .next/standalone/public; cp -r .next/static .next/standalone/.next/static; mv .next/standalone/server.js .next/standalone/server.cjs)",
+    "build-full": "next build && npm run obfuscate-css",
     "start": "next start",
     "lint": "next lint",
     "obfuscate-css": "next-css-obfuscator"

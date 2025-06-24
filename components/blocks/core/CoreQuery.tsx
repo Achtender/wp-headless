@@ -16,7 +16,6 @@ const CoreQuery = (self: RenderBlock) => {
   // Prevent effect from running on initial mount
   const [didMount, setDidMount] = useState(false);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!didMount) {
       setDidMount(true);
