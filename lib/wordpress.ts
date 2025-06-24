@@ -55,7 +55,8 @@ async function wordpressFetchResponse(url: string): Promise<Response> {
 }
 
 export async function wordpressFetch<T>(url: string): Promise<T> {
-  return (await wordpressFetchResponse(url)).json();
+  const jsonText = await (await wordpressFetchResponse(url)).text()
+  return JSON.parse(jsonText.replaceAll(baseUrl!, '/'));
 }
 
 export async function getSettings(): Promise<{ page_on_front: number }> {
