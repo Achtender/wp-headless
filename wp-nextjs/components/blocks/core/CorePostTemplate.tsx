@@ -1,21 +1,22 @@
 'use client';
 
 import { useContext } from 'react';
-import { RenderBlock } from '@/components/craft-blocks.tsx';
+import { RenderBlock } from '@/components/craft-blocks';
 
-import CoreGroup from '@/components/blocks/core/CoreGroup.tsx';
+import CoreGroup from '@/components/blocks/core/CoreGroup';
 
-import { QueryContext } from '@/components/craft-helpers.tsx';
-import { FetchContext } from '@/components/craft-helpers.tsx';
-import { ScopeContext } from '@/components/craft-helpers.tsx';
+import { QueryContext } from '@/components/utils/client-contexts';
+import { FetchContext } from '@/components/utils/client-contexts';
+import { ScopeContext } from '@/components/utils/client-contexts';
 
 const CorePostTemplate = (self: RenderBlock) => {
-  const fetch = useContext(FetchContext);
-  const query = useContext(QueryContext);
+  const { fetch } = useContext(FetchContext) ?? {};
+  const { query } = useContext(QueryContext) ?? {};
 
   if (!fetch || !query) return null;
+  // const [scope, setScope] = useState(post);
 
-  const post_loop = fetch.posts.map((post, k) => {
+  const post_loop = fetch.posts.map((post: any, k: number) => {
     const post_wrap: RenderBlock = {
       blockName: 'core/group',
       children: self.children,
@@ -26,10 +27,8 @@ const CorePostTemplate = (self: RenderBlock) => {
       innerContent: [],
     };
 
-    // console.log(post_wrap)
-
     return (
-      <ScopeContext.Provider key={k} value={post}>
+      <ScopeContext.Provider key={k} value={{ scope: post, setScope: () => {} }}>
         <CoreGroup {...post_wrap} />
       </ScopeContext.Provider>
     );

@@ -2,7 +2,7 @@ import { ImageResponse } from 'next/og';
 import { NextRequest } from 'next/server';
 
 export const runtime = 'edge';
-// export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -13,15 +13,10 @@ export async function GET(request: NextRequest) {
   }
 
   const size = 20;
-  // Render a small version (e.g., 16x16)
   return new ImageResponse(
     (
-      <img
-        src={imageUrl}
-        width={size}
-        height={size}
-        // style={{ filter: 'blur(4px)' }}
-      />
+      // eslint-disable-next-line @next/next/no-img-element,jsx-a11y/alt-text
+      <img src={imageUrl} width={size} height={size} />
     ),
     { width: size, height: size },
   );

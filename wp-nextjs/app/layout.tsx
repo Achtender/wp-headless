@@ -18,6 +18,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 
 import { Nav } from '@/components/nav/nav';
+import { ServiceWorkerManager } from '@/components/pwa/sw-manager';
 
 const font = FontSans({
   subsets: ['latin'],
@@ -42,6 +43,7 @@ export default function RootLayout(
       <head />
       <body
         className={cn(
+          'overflow-y-scroll',
           'flex flex-col [&>*]:flex-none [&>section:first-of-type]:flex-1 min-h-screen font-sans antialiased',
           font.variable,
         )}
@@ -57,6 +59,8 @@ export default function RootLayout(
           <Footer />
         </ThemeProvider>
         {/* <Analytics /> */}
+
+        <ServiceWorkerManager />
       </body>
     </html>
   );

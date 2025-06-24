@@ -1,11 +1,11 @@
 'use client';
 
 import Image from 'next/image';
-import { RenderBlock } from '@/components/craft-blocks.tsx';
+import { RenderBlock } from '@/components/craft-blocks';
 
 const CoreImage = (self: RenderBlock) => {
-  const media_placeholder = self.ctx.media_placeholder;
-  const media = self.ctx.media?.media_details;
+  // const media_placeholder = self.ctx?.media_placeholder;
+  const media = (self.ctx?.media as any|undefined)?.media_details;
 
   if (!media) return null;
 
@@ -28,12 +28,12 @@ const CoreImage = (self: RenderBlock) => {
       sizes='(min-width: 1024px) 800px, (min-width: 600px) 400px, 100vw'
       className='flex-1 h-auto object-cover'
       style={{ aspectRatio: self.attrs.aspectRatio }}
-      {...(media_placeholder
-        ? {
-          placeholder: 'blur',
-          blurDataURL: media_placeholder?.blurDataURL,
-        }
-        : {})}
+      // {...(media_placeholder
+      //   ? {
+      //     placeholder: 'blur',
+      //     blurDataURL: media_placeholder?.blurDataURL,
+      //   }
+      //   : {})}
     />
   );
 };

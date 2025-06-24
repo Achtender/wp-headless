@@ -1,8 +1,8 @@
-import { RenderBlock } from '@/components/craft-blocks.tsx';
+import { RenderBlock } from '@/components/craft-blocks';
 
 import DebugWarning from '@/components/blocks/plugin/dev/DebugWarning';
 import GravityFormsForm from '@/components/blocks/plugin/gravityforms/GravityFormsForm';
-import { getUrl, wordpressFetch } from '@/lib/wordpress.ts';
+import { getUrl, wordpressFetch } from '@/lib/wordpress';
 
 export const library = {
   'dev/warning': DebugWarning,

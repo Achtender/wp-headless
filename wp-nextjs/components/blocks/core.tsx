@@ -1,7 +1,7 @@
 import { RenderBlock } from '@/components/craft-blocks';
 import { getFeaturedMediaById, getQueryPosts } from '@/lib/wordpress';
 
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+// const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
 
 import CoreImage from '@/components/blocks/core/CoreImage';
 import CoreGallery from '@/components/blocks/core/CoreGallery';
@@ -25,10 +25,10 @@ import CoreQueryPaginationNext from '@/components/blocks/core/CoreQueryPaginatio
 import CoreQueryPaginationNumbers from '@/components/blocks/core/CoreQueryPaginationNumbers';
 
 export const library = {
-  // 'core/query-pagination': CoreQueryPagination,
-  // 'core/query-pagination-previous': CoreQueryPaginationPrevious,
-  // 'core/query-pagination-next': CoreQueryPaginationNext,
-  // 'core/query-pagination-numbers': CoreQueryPaginationNumbers,
+  'core/query-pagination': CoreQueryPagination,
+  'core/query-pagination-previous': CoreQueryPaginationPrevious,
+  'core/query-pagination-next': CoreQueryPaginationNext,
+  'core/query-pagination-numbers': CoreQueryPaginationNumbers,
   'core/buttons': CoreButtons,
   'core/button': CoreButton,
   'core/column': CoreColumn,
@@ -36,12 +36,12 @@ export const library = {
   'core/query': CoreQuery,
   'core/query-no-results': CoreQueryNoResults,
   'core/post-template': CorePostTemplate,
-  // 'core/post-title': CorePostTitle,
+  'core/post-title': CorePostTitle,
   'core/post-featured-image': CorePostFeaturedImage,
   'core/heading': CoreHeading,
   'core/paragraph': CoreParagraph,
   'core/image': CoreImage,
-  // 'core/gallery': CoreGallery,
+  'core/gallery': CoreGallery,
   'core/group': CoreGroup,
   'core/separator': CoreSeparator,
   'core/spacer': CoreSpacer,
@@ -51,24 +51,28 @@ export async function resolve(self: RenderBlock): Promise<RenderBlock> {
   switch (self.blockName) {
     case 'core/image': {
       const media = await getFeaturedMediaById(self.attrs.id);
-      const media_placeholder = await (async () => {
-        const self_media = media?.media_details;
-        if (!self_media) return null;
+      // const media_placeholder = await (async () => {
+      //   const self_media = media?.media_details;
+      //   if (!self_media) return null;
 
-        const response = await fetch(`${baseUrl}/api/blur?url=${encodeURIComponent(self_media.sizes?.thumbnail?.source_url)}`);
-        const arrayBuffer = await response.arrayBuffer();
-        const base64 = Buffer.from(arrayBuffer).toString('base64');
-        const mimeType = response.headers.get('content-type') || 'image/png';
+      //   const response = await fetch(
+      //     `${baseUrl}/api/og/blur?url=${
+      //       encodeURIComponent(self_media.sizes?.thumbnail?.source_url)
+      //     }`,
+      //   );
+      //   const arrayBuffer = await response.arrayBuffer();
+      //   const base64 = Buffer.from(arrayBuffer).toString('base64');
+      //   const mimeType = response.headers.get('content-type') || 'image/png';
 
-        return {
-          blurDataURL:  `data:${mimeType};base64,${base64}`,
-        };
-      })();
+      //   return {
+      //     blurDataURL: `data:${mimeType};base64,${base64}`,
+      //   };
+      // })();
 
       self.ctx = {
         ...self.ctx,
         media,
-        media_placeholder,
+        // media_placeholder,
       };
       break;
     }
@@ -110,16 +114,22 @@ export async function resolve(self: RenderBlock): Promise<RenderBlock> {
       break;
     }
     case 'core/query': {
-      const query_fetch = await getQueryPosts({
+      if (!self.ctx) {
+        self.ctx = {};
+      }
+      
+      self.ctx.query = {
         author: self.attrs.query.author || undefined,
         post_type: self.attrs.query.postType || undefined,
         search: self.attrs.query.search || undefined,
         per_page: self.attrs.query.perPage,
         order: self.attrs.query.order,
         order_by: self.attrs.query.orderBy,
-      });
+        offset: 0,
+      };
 
-      self.ctx.query = self.attrs?.query;
+      const query_fetch = await getQueryPosts(self.ctx.query);
+   
       self.ctx.fetch = {
         posts: query_fetch.posts,
         total_pages: query_fetch.total_pages,

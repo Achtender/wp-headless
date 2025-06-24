@@ -1,27 +1,38 @@
 'use client';
 
-import { findInParentCtx, RenderBlock } from '@/components/craft-blocks.tsx';
+import { useContext } from 'react';
 
-import { Button } from '@/components/ui/button.tsx';
+import { RenderBlock } from '@/components/craft-blocks';
+import { QueryContext } from '@/components/utils/client-contexts';
+import { FetchContext } from '@/components/utils/client-contexts';
+
+import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 
-const CoreQueryPaginationNext = (self: RenderBlock) => {
-  const query = findInParentCtx(self, 'query');
+const CoreQueryPaginationNext = ({}: RenderBlock) => {
+  const { query, setQuery } = useContext(QueryContext) ?? {};
+  const { fetch } = useContext(FetchContext) ?? {};
 
-  if (!query) {
-    return <>No query</>
+  if (!query || !fetch) {
+    return null;
   }
 
-  const offset = query?.query.offset ?? null;
-  const offset_limit = query
-    ? query?.total - query?.query.per_page
-    : 0;
+  const offset = query?.offset || 0;
+  const offset_limit = fetch?.total - query?.per_page;
 
   return (
     <Button
-      disabled={!offset || offset >= offset_limit} //
+      disabled={offset >= offset_limit}
       variant='outline'
       className='flex-none px-0 border w-10 text-base'
+      onClick={() => {
+        if (setQuery) {
+          setQuery({
+            ...query,
+            offset: offset + query.per_page,
+          });
+        }
+      }}
     >
       <ArrowRight className='h-5 w-5' />
       <span className='sr-only'>Next Page</span>

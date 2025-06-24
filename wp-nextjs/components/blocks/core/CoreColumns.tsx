@@ -1,7 +1,7 @@
 'use client';
 
-import { RenderBlock } from '@/components/craft-blocks.tsx';
-// import { nextBlock } from '@/components/craft-blocks.tsx';
+import { RenderBlock } from '@/components/craft-blocks';
+// import { nextBlock } from '@/components/craft-blocks';
 
 const CoreColumns = (self: RenderBlock) => {
   const styles: string[] = [];

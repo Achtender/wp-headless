@@ -4,10 +4,20 @@ import { getPageById, getSettings } from '@/lib/wordpress';
 // Revalidate pages every hour
 export const revalidate = 3600;
 
-import { generateStaticParams } from '@/app/[slug]/page';
-import { generateMetadata } from '@/app/[slug]/page';
+import { generateMetadata as generatePageMetadata } from '@/app/[slug]/page';
 
-export { generateMetadata, generateStaticParams };
+export function generateMetadata() {
+  return generatePageMetadata({
+    params: (async () => {
+      const settings = await getSettings();
+      const page = await getPageById(settings.page_on_front);
+
+      return {
+        slug: page.slug,
+      };
+    })(),
+  });
+}
 
 export default async function Page() {
   const settings = await getSettings();

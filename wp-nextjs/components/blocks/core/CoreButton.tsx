@@ -1,9 +1,9 @@
 'use client';
 
-// import { trimWordPressHref } from '@/components/craft-blocks.tsx';
-import { RenderBlock } from '@/components/craft-blocks.tsx';
+// import { trimWordPressHref } from '@/components/craft-blocks';
+import { RenderBlock } from '@/components/craft-blocks';
 
-import { Button } from '@/components/ui/button.tsx';
+import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
 function trimWordPressHref(_:string) {

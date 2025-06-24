@@ -121,6 +121,7 @@ export async function getAllPosts(filterParams?: {
 }
 
 export async function getQueryPosts(filterParams?: {
+  offset?: number;
   author?: string;
   tag?: string;
   category?: string;
@@ -155,6 +156,10 @@ export async function getQueryPosts(filterParams?: {
   if (query_post_type === 'post') {
     // api entry for `post` is `posts`
     query_post_type = 'posts';
+  }
+
+  if (filterParams?.offset) {
+    query.offset = filterParams.offset;
   }
 
   if (filterParams?.search) {

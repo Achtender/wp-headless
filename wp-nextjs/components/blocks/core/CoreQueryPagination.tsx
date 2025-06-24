@@ -1,25 +1,27 @@
 'use client';
 
-import { RenderBlock } from '@/components/craft-blocks.tsx';
-import { nextBlock } from '@/components/craft-blocks.tsx';
+import { RenderBlock } from '@/components/craft-blocks';
+import CoreGroup from '@/components/blocks/core/CoreGroup';
 
-const CorePagination = (block: RenderBlock) => {
-  return nextBlock(
-    {
-      ...block,
-      attrs: {
-        ...block.attrs,
-        layout: {
-          ...block.attrs.layout,
-          type: 'flex',
-          verticalAlign: 'center',
-          justifyContent: 'space-between',
-        },
+const CorePagination = (self: RenderBlock) => {
+  const group_wrap = {
+    ...self,
+    attrs: {
+      ...self.attrs,
+      layout: {
+        ...self.attrs.layout,
+        type: 'flex',
+        verticalAlign: 'center',
+        justifyContent: 'space-between',
       },
-      blockName: 'core/group',
     },
-    undefined,
-    block.ctx,
+    blockName: 'core/group',
+  };
+
+  return (
+    <CoreGroup {...group_wrap}>
+      {self.children}
+    </CoreGroup>
   );
 };
 

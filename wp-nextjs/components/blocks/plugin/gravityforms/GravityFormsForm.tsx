@@ -2,22 +2,22 @@
 
 import { createContext, useContext, useState } from 'react';
 
-import { RenderBlock } from '@/components/craft-blocks.tsx';
-import { Button } from '@/components/ui/button.tsx';
+import { RenderBlock } from '@/components/craft-blocks';
+import { Button } from '@/components/ui/button';
 
-import CoreGroup from '@/components/blocks/core/CoreGroup.tsx';
-import CoreButtons from '@/components/blocks/core/CoreButtons.tsx';
+import CoreGroup from '@/components/blocks/core/CoreGroup';
+import CoreButtons from '@/components/blocks/core/CoreButtons';
 
 const FormResultContext = createContext<any>(undefined);
 const FormSubmitContext = createContext<any>(undefined);
 
 const GravityFormsForm = (self: RenderBlock) => {
-  if (!self.attrs.form) return;
-
   const [result, setResult] = useState<any>(null);
   const [submit, setSubmit] = useState<any>({
     pending: false,
   });
+
+  if (!self.attrs.form) return;
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();

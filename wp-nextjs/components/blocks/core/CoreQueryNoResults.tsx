@@ -2,15 +2,15 @@
 
 import { useContext } from 'react';
 
-import { RenderBlock } from '@/components/craft-blocks.tsx';
-import CoreGroup from '@/components/blocks/core/CoreGroup.tsx';
+import { RenderBlock } from '@/components/craft-blocks';
+import CoreGroup from '@/components/blocks/core/CoreGroup';
 
-import { QueryContext } from '@/components/craft-helpers.tsx';
-import { FetchContext } from '@/components/craft-helpers.tsx';
+import { QueryContext } from '@/components/utils/client-contexts';
+import { FetchContext } from '@/components/utils/client-contexts';
 
 const CoreQueryNoResults = (self: RenderBlock) => {
-  const fetch = useContext(FetchContext);
-  const query = useContext(QueryContext);
+  const { fetch } = useContext(FetchContext) ?? {};
+  const { query } = useContext(QueryContext) ?? {};
 
   if (!fetch || !query) return null;
   if (fetch.posts.length) return null;

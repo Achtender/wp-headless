@@ -1,4 +1,0 @@
-{
-  "deno": true,
-  "deno.config": "./deno.json"
-}

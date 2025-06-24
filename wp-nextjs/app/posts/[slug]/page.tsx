@@ -1,11 +1,8 @@
 import { getAllPosts, getAuthorById, getCategoryById } from '@/lib/wordpress';
-import {
-  dangerouslySetInnerWordPressRaw,
-  getFeaturedMediaById,
-  getPostBySlug,
-} from '@/lib/wordpress';
+import { getFeaturedMediaById, getPostBySlug } from '@/lib/wordpress';
 import { notFound } from 'next/navigation';
 import { Article, Container, Prose, Section } from '@/components/craft';
+import { dangerouslySetInnerWordPressRaw } from '@/components/craft-helpers';
 import { badgeVariants } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { siteConfig } from '@/site.config';
@@ -36,14 +33,14 @@ export async function generateMetadata({
   const ogUrl = new URL(`${siteConfig.site_domain}/api/og`);
   ogUrl.searchParams.append('title', post.title.raw);
   // Strip HTML tags for description
-    const description = post.excerpt?.raw
+  const description = post.excerpt?.raw
     ? post.excerpt.raw.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim()
     : post.content.raw
       .replace(/\s+/g, ' ')
       .replace(/<[^>]*>/g, '')
       .trim()
       .slice(0, 200) + '...';
-      
+
   ogUrl.searchParams.append('description', description);
 
   return {

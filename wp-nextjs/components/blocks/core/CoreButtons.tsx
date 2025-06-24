@@ -1,7 +1,7 @@
 'use client';
 
-import { RenderBlock } from '@/components/craft-blocks.tsx';
-import CoreGroup from '@/components/blocks/core/CoreGroup.tsx';
+import { RenderBlock } from '@/components/craft-blocks';
+import CoreGroup from '@/components/blocks/core/CoreGroup';
 
 const CoreButtons = (self: RenderBlock) => {
   return (

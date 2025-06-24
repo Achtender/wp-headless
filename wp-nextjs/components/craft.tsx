@@ -7,8 +7,8 @@ import { twMerge } from 'tailwind-merge';
 
 import * as blockSerialization from '@wordpress/block-serialization-default-parser';
 
-import { nextBlock, resolveBlock } from './craft-blocks.tsx';
-import type { RenderBlock } from './craft-blocks.tsx';
+import { nextBlock, resolveBlock } from './craft-blocks';
+import type { RenderBlock } from './craft-blocks';
 
 // Utility function to merge class names
 export function cn(...inputs: ClassValue[]) {
@@ -185,11 +185,11 @@ const styles = {
     ],
   },
   layout: {
-    // spacing: '[&>*+*]:mt-6',
     spacing: '[&>*+*]:mt-6',
     article: 'max-w-prose',
-    container: 'max-w-6xl mx-auto p-6 sm:p-8',
-    main: 'py-0 lg:py-8',
+    container: 'max-w-6xl mx-auto p-4 sm:p-8',
+    // main: '', 
+    main:   'py-0 lg:py-8',
     section: 'py-8 md:py-10',
   },
 };

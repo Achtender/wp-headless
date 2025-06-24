@@ -1,8 +1,8 @@
 'use client';
 
-import { RenderBlock } from '@/components/craft-blocks.tsx';
+import { RenderBlock } from '@/components/craft-blocks';
 
-const CoreSeparator = (_self: RenderBlock) => (
+const CoreSeparator = ({}: RenderBlock) => (
   <hr className='border-b-1 border-gray-400' />
 );
 

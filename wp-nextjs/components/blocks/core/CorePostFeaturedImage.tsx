@@ -1,14 +1,14 @@
 'use client';
 
 import { useContext } from 'react';
-import { RenderBlock } from '@/components/craft-blocks.tsx';
+import { RenderBlock } from '@/components/craft-blocks';
 
-import CoreImage from '@/components/blocks/core/CoreImage.tsx';
+import CoreImage from '@/components/blocks/core/CoreImage';
 
-import { ScopeContext } from '@/components/craft-helpers.tsx';
+import { ScopeContext } from '@/components/utils/client-contexts';
 
 const CorePostFeaturedImage = (self: RenderBlock) => {
-  const scope = useContext(ScopeContext);
+  const { scope } = useContext(ScopeContext) ?? {};
   const media = scope?._embedded?.['wp:featuredmedia']?.[0];
 
   if (!scope || !media) return null;

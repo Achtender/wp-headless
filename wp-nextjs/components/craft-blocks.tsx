@@ -1,5 +1,5 @@
+import { ReactNode } from 'react';
 import * as blockSerialization from '@wordpress/block-serialization-default-parser';
-import type { Page, Post } from '@/lib/wordpress.d.ts';
 
 import {
   library as library_plugin,
@@ -9,7 +9,6 @@ import {
   library as library_core,
   resolve as resolveCore,
 } from '@/components/blocks/core';
-
 
 type BlockLibrary = {
   [blockName: string]: React.ComponentType<any>;
@@ -25,41 +24,15 @@ const library: {
 
 export type ParsedBlock = blockSerialization.ParsedBlock;
 export interface RenderBlock extends blockSerialization.ParsedBlock {
-  // children?: (Element | RenderBlockComponent | null)[];
+  children?: ReactNode | ReactNode[];
+  className?: string;
 
   blockName: string;
   attrs: any;
-  innerBlocks?: RenderBlock[];
-  ctx?: {
-    // dev-only context
-    code?: string;
-    message?: string;
-
-    // context
-    fetch?: {
-      posts: (Post | Page)[];
-      total_pages: number;
-      total: number;
-    };
-    query?: {
-      query: {
-        author?: string;
-        post_type?: string;
-        search?: string;
-        order?: string;
-        order_by?: string;
-        per_page: number;
-        offset: number;
-      };
-    };
-    scope?: Post | Page;
-    // media?: FeaturedMedia;
-
-    [key: string]: unknown;
-  };
+  innerBlocks: RenderBlock[];
+  ctx?: any;
 }
 export type RenderBlockComponent = React.FC<RenderBlock>;
-
 
 export async function resolveBlock(
   block: blockSerialization.ParsedBlock | RenderBlock,
@@ -94,7 +67,7 @@ export async function resolveBlock(
 
       for (const j in result.innerBlocks.filter((_) => _.blockName)) {
         // const _ = await resolveBlock(result.innerBlocks[j], result, depth + 1);
-        const _ = await resolveBlock(result.innerBlocks[j],  depth + 1);
+        const _ = await resolveBlock(result.innerBlocks[j], depth + 1);
         if (_) nested.push(_);
       }
 
@@ -136,41 +109,8 @@ export function nextBlock(
       )
       : null;
 
-    return  <Component key={k} {...self}>{nested}</Component> ;
+    return <Component key={k} {...self}>{nested}</Component>;
   }
 
   return null;
-}
-
-const baseUrl = '';
-
-export function dangerouslySetInnerWordPressRaw(raw?: string) {
-  let normalized_raw = raw ?? '';
-
-  // Remove absolute URLs and replace with relative paths
-  normalized_raw = normalized_raw.replace(
-    new RegExp(
-      `<a([^>]+)href=["']${
-        baseUrl!.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')
-      }/([^"']+)["']`,
-      'g',
-    ),
-    `<a$1href="/$2"`,
-  );
-
-  // Remove HTML comments
-  normalized_raw = normalized_raw.replace(/<!--[\s\S]*?-->/g, '');
-
-  return {
-    dangerouslySetInnerHTML: { __html: normalized_raw },
-  };
-}
-
-export function trimWordPressHref(raw?: string) {
-  let normalized_raw = raw ?? '';
-
-  // Remove absolute URLs and replace with relative paths
-  normalized_raw = normalized_raw.replace(baseUrl!, ``);
-
-  return normalized_raw;
 }

@@ -1,9 +1,10 @@
 'use client';
 
-import { RenderBlock } from '@/components/craft-blocks.tsx';
+import { RenderBlock } from '@/components/craft-blocks';
 
 const CoreParagraph = (self: RenderBlock) => {
-  return <div dangerouslySetInnerHTML={{ __html: self.ctx.content as string }}></div>;
+  const text = self.ctx?.content as string ?? '';
+  return <div dangerouslySetInnerHTML={{ __html: text }}></div>;
 };
 
 export default CoreParagraph;

@@ -1,8 +1,8 @@
 'use client';
 
-import { RenderBlock } from '@/components/craft-blocks.tsx';
+import { RenderBlock } from '@/components/craft-blocks';
 
-const CoreSpacer = (_self: RenderBlock) => (
+const CoreSpacer = ({}: RenderBlock) => (
   <div className='h-5' /> //
 );
 

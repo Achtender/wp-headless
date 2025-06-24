@@ -14,11 +14,11 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
-      {
-        source: "/admin",
-        destination: `${process.env.WORDPRESS_URL}/wp-admin`,
-        permanent: true,
-      },
+      // {
+      //   source: "/wp-login",
+      //   destination: `${process.env.WORDPRESS_URL}/wp-admin`,
+      //   permanent: true,
+      // },
     ];
   },
 };
